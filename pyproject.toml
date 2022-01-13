@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "wotoplatform"
+version = "0.0.0.10"
+description = ""
+authors = ["AliWoto <aminnimaj@gmail.com>"]
+packages = [
+    { include = "wotoplatform" }
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: OS Independent",
+]
+readme = "README.md"
+keywords = ["api"]
+homepage = "https://github.com/ALiwoto/wotoplatform-Py"
+
+[tool.poetry.dependencies]
+python = ">=3.7"
+pydantic = ">=1.8.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
