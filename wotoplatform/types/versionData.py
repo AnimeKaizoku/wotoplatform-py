@@ -20,6 +20,9 @@ class VersionData(DScaffold):
     
     def get_single_batch(self) -> str:
         return __BATCH_CHECK_VERSION__
+    
+    def get_response_type(self) -> type:
+        return VersionResponse
 
 
 class VersionResult(ResultScaffold):

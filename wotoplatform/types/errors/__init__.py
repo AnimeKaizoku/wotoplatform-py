@@ -1,9 +1,27 @@
 
 from .general import (
-    GeneralException, 
+    ErrorCode,
+    EndpointError,
     ClientException,
     ServerException,
-    EndpointError,
+    GeneralException, 
+)
+
+from .serverErrors import (
+    UnknownError,
+    ServerUnavailable,
+    InvalidUsernameFormat,
+    InvalidPasswordFormat,
+    UsernameExists,
+    WrongUsername,
+    WrongPassword,
+    InvalidAuthKeyFormat,
+    InvalidAccessHashFormat,
+    WrongAuthKey,
+    LoginAccessHashExpired,
+    InvalidFirstName,
+    InvalidLastName,
+    InvalidTitle,
 )
 
 from .parser import (
@@ -12,10 +30,25 @@ from .parser import (
 
 
 __all__ = [
-    GeneralException,
+    ErrorCode,
+    UnknownError,
+    ServerUnavailable,
+    InvalidUsernameFormat,
+    InvalidPasswordFormat,
+    UsernameExists,
+    WrongUsername,
+    WrongPassword,
+    InvalidAuthKeyFormat,
+    InvalidAccessHashFormat,
+    WrongAuthKey,
+    LoginAccessHashExpired,
+    InvalidFirstName,
+    InvalidLastName,
+    InvalidTitle,
+    EndpointError,
     ClientException,
     ServerException,
-    EndpointError,
+    GeneralException,
     parse_server_error,
 ]
 

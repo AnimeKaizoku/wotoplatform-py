@@ -33,6 +33,9 @@ class DScaffold(Scaffold, BaseModel):
             'data': self.json(),
         }
         return json.dumps(final_value).encode('utf-8')
+    
+    def get_response_type(self) -> type:
+        pass
 
 
 class ResultScaffold(BaseModel):

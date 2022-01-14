@@ -11,7 +11,11 @@ from .versionData import(
 )
 from .usersData import(
     LoginUserData,
+    LoginUserResponse,
+    LoginUserResult,
     RegisterUserData,
+    RegisterUserResponse,
+    RegisterUserResult,
 )
 
 __all__ = [
@@ -23,5 +27,9 @@ __all__ = [
     VersionResponse,
     VersionResult,
     LoginUserData,
+    LoginUserResponse,
+    LoginUserResult,
     RegisterUserData,
+    RegisterUserResponse,
+    RegisterUserResult,
 ]

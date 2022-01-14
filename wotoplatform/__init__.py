@@ -2,20 +2,22 @@
 import json
 import socket
 import threading
+from wotoplatform.types.usersData import LoginUserData, LoginUserResult, RegisterUserResult
+
+from wotoplatform.types.versionData import VersionResponse
 from .tools import (
     make_sure_num,
     make_sure_byte, 
 )
-
 from .types.errors.general import (
     ClientException,
 )
-from .types.scaffold import (
-    Scaffold,
-)
 from .types import (
+    DScaffold,
+    RScaffold,
+    Scaffold,
     VersionData,
-    VersionResponse,
+    RegisterUserData,
 )
 
 
@@ -26,7 +28,10 @@ class WotoClient():
     username: str = ''
     password: str = ''
     endpoint_url: str = ''
+    auth_key: str = ''
+    access_hash: str = ''
     is_initialized: bool = False
+    is_logged_in: bool = False
     client_version: VersionData = None
     __woto_socket: socket.socket = None
     __MAX_DATA_COUNTER = 8
@@ -34,7 +39,6 @@ class WotoClient():
     client_lock = threading.Lock()
 
     def __init__(self, username: str, password: str, endpoint: str, port: int = 50100):
-
         self.username = username
         self.password = password
 
@@ -49,12 +53,63 @@ class WotoClient():
         self.client_version = VersionData()
         self.is_initialized = True
         try:
-            print(VersionResponse(**json.loads(self.send(self.client_version))))
+            version_response = self.send_and_parse(self.client_version)
+            if not isinstance(version_response, VersionResponse):
+                raise ClientException(f'Expected type of VersionResponse, got {type(version_response)}.')
+            
+            if not version_response.success:
+                raise version_response.get_exception()
+            
+            if not version_response.result.is_acceptable:
+                raise ClientException(f'Client version is not acceptable.')
+        
+            self._login(
+                username=self.username,
+                password=self.password,
+                auth_key=self.auth_key,
+                access_hash=self.access_hash,
+            )
+
+            
         except:
             self.is_initialized = False
             raise
 
+    
+    def _login(self, username: str, password: str, auth_key:str, access_hash: str) -> LoginUserResult:
+        """
+        Login user. Don't use this method directly, instead use start method.
+        """
+        response = self.send_and_parse(
+            LoginUserData(
+                username=username,
+                password=password,
+                auth_key=auth_key,
+                access_hash=access_hash,
+            )
+        )
+
+        if not response.success:
+            raise response.get_exception()
         
+        return response.result
+
+    def _register(self, username: str, password: str) -> RegisterUserResult:
+        """
+        Registers a new user on woto-platform. 
+        Don't use this method directly, instead use start method.
+        """
+        response = self.send_and_parse(
+            RegisterUserData(
+                username=username,
+                password=password,
+            )
+        )
+
+        if not response.success:
+            raise response.get_exception()
+        
+        return response.result
 
     def _write_data(self, data: bytes):
         bb = make_sure_num(len(data), self.__MAX_DATA_COUNTER)
@@ -74,17 +129,27 @@ class WotoClient():
             raise ClientException('Client is not initialized.')
         
         if not isinstance(scaffold, Scaffold):
-            raise ClientException(f'Invalid type of data received: {type(scaffold)}.')
+            raise ClientException(f'Invalid type of data received as argument: {type(scaffold)}.')
 
         with self.client_lock:
             self._write_data(scaffold.get_as_bytes())
             return self._read_data()
+    
+    def send_and_parse(self, scaffold: DScaffold) -> RScaffold:
+        if not isinstance(scaffold, DScaffold):
+            return None
+        
+        response_type = scaffold.get_response_type()
+        if not response_type:
+            return None
+        
+        return response_type(**json.loads(self.send(scaffold)))
 
 
 
 client = WotoClient(
     username='aliwoto', 
-    password='1234567', 
+    password='12345678910', 
     endpoint='localhost',
     port=50100,
 )
