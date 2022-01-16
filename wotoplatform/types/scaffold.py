@@ -20,6 +20,9 @@ class Scaffold():
 
     def get_batch_execution(self) -> str:
         return __BATCH_STR__ + self.get_single_batch()
+    
+    def is_empty_scaffold(self):
+        return False
 
 
 class DScaffold(Scaffold, BaseModel):
@@ -37,6 +40,14 @@ class DScaffold(Scaffold, BaseModel):
     def get_response_type(self) -> type:
         pass
 
+
+class EmptyScaffoldData(DScaffold):
+    """
+    EmptyScaffoldData descripes an empty `DScaffold`.
+    """
+    def is_empty_scaffold(self):
+        return True
+    
 
 class ResultScaffold(BaseModel):
     """

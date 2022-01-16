@@ -11,4 +11,5 @@ async def test_woto_client():
         the_config.port,
     )
     await client.start()
+    print(await client.get_me())
 

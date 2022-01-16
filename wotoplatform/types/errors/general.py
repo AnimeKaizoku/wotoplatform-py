@@ -39,6 +39,8 @@ class ErrorCode(Enum):
     ErrInvalidFirstName = 12
     ErrInvalidLastName = 13
     ErrInvalidTitle = 14
+    ErrAlreadyAuthorized = 15
+    ErrNotAuthorized = 16
 
 class ServerException(GeneralException):
     """

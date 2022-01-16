@@ -1,10 +1,10 @@
-import asyncio
 import json
-import socket
 import threading
 from typing import Union
 
-from wotoplatform.types.usersData import GetMeResult, GetUserInfoResult, ResolveUsernameResult
+from wotoplatform.types.usersData import(
+    GetMeData, GetMeResult, GetUserInfoResult, ResolveUsernameResult
+)
 from .utils import (
     WotoSocket,
 )
@@ -174,7 +174,12 @@ class WotoClient(ClientBase):
         return response_type(**json.loads(await self.send(scaffold)))
 
     async def get_me(self) -> GetMeResult:
-        pass
+        response = await self.send_and_parse(GetMeData())
+
+        if not response.success:
+            raise response.get_exception()
+        
+        return response.result
 
     async def get_user_info(self, user_id: Union[int, str]) -> GetUserInfoResult:
         pass

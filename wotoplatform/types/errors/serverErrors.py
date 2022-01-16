@@ -79,7 +79,7 @@ class WrongPassword(ServerException):
     origin: str = ''
 
     def __init__(self, message: str, origin: str):
-        self.code = 7
+        self.code = ErrorCode.ErrWrongPassword
         self.message = message
         self.origin = origin
 
@@ -89,7 +89,7 @@ class InvalidAuthKeyFormat(ServerException):
     origin: str = ''
 
     def __init__(self, message: str, origin: str):
-        self.code = 8
+        self.code = ErrorCode.ErrInvalidAuthKeyFormat
         self.message = message
         self.origin = origin
 
@@ -99,7 +99,7 @@ class InvalidAccessHashFormat(ServerException):
     origin: str = ''
 
     def __init__(self, message: str, origin: str):
-        self.code = 9
+        self.code = ErrorCode.ErrInvalidAccessHashFormat
         self.message = message
         self.origin = origin
 
@@ -108,7 +108,7 @@ class WrongAuthKey(ServerException):
     origin: str = ''
 
     def __init__(self, message: str, origin: str):
-        self.code = 10
+        self.code = ErrorCode.ErrWrongAuthKey
         self.message = message
         self.origin = origin
 
@@ -117,7 +117,7 @@ class LoginAccessHashExpired(ServerException):
     origin: str = ''
 
     def __init__(self, message: str, origin: str):
-        self.code = 11
+        self.code = ErrorCode.ErrLoginAccessHashExpired
         self.message = message
         self.origin = origin
 
@@ -126,7 +126,7 @@ class InvalidFirstName(ServerException):
     origin: str = ''
 
     def __init__(self, message: str, origin: str):
-        self.code = 12
+        self.code = ErrorCode.ErrInvalidFirstName
         self.message = message
         self.origin = origin
 
@@ -136,7 +136,7 @@ class InvalidLastName(ServerException):
     origin: str = ''
 
     def __init__(self, message: str, origin: str):
-        self.code = 13
+        self.code = ErrorCode.ErrInvalidLastName
         self.message = message
         self.origin = origin
 
@@ -146,12 +146,28 @@ class InvalidTitle(ServerException):
     origin: str = ''
 
     def __init__(self, message: str, origin: str):
-        self.code = 14
+        self.code = ErrorCode.ErrInvalidTitle
         self.message = message
         self.origin = origin
 
 
+class AlreadyAuthorized(ServerException):
+    message: str = ''
+    origin: str = ''
+
+    def __init__(self, message: str, origin: str):
+        self.code = ErrorCode.ErrAlreadyAuthorized
+        self.message = message
+        self.origin = origin
 
 
+class NotAuthorized(ServerException):
+    message: str = ''
+    origin: str = ''
+
+    def __init__(self, message: str, origin: str):
+        self.code = ErrorCode.ErrNotAuthorized
+        self.message = message
+        self.origin = origin
 
 

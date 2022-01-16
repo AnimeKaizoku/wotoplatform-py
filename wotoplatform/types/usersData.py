@@ -1,10 +1,12 @@
 from typing import Optional
 
-from .scaffold import (
+from . import (
     DScaffold,
     RScaffold,
     ResultScaffold,
+    EmptyScaffoldData,
 )
+from .permissions import UserPermission
 
 __BATCH_REGISTER_USER__ = 'register_user'
 __BATCH_LOGIN_USER__ = 'login_user'
@@ -14,10 +16,14 @@ __BATCH_RESOLVE_USERNAME__ = 'resolve_username'
 __ACTION_USER__ = 2
 
 class RegisterUserData(DScaffold):
+    user_id: int = 0
+    private_hash: str = ''
     username: str = ''
     password: str = ''
     first_name: str = ''
     last_name: str = ''
+    email: str = ''
+    permission: UserPermission = UserPermission.NormalUser
 
     def get_action(self) -> int:
         return __ACTION_USER__
@@ -29,11 +35,23 @@ class RegisterUserData(DScaffold):
         return RegisterUserResponse
     
 class RegisterUserResult(ResultScaffold):
-    username: str = ''
+    user_id: int = 0
+    private_hash: str = ''
+    email: str = ''
+    website: str = ''
+    auth_key: str = ''
+    access_hash: str = ''
+    permission: UserPermission = UserPermission.NormalUser
+    bio: str = ''
+    source_url: str = ''
+    telegram_id: int = 0
     first_name: str = ''
     last_name: str = ''
-    permission: int = 0
-    bio: str = ''
+    username: str = ''
+    created_at: str = ''
+    updated_at: str = ''
+    is_virtual: bool = False
+    created_by: int = 0
     
 class RegisterUserResponse(RScaffold):
     result: Optional[RegisterUserResult]
@@ -55,41 +73,52 @@ class LoginUserData(DScaffold):
         return LoginUserResponse
 
 class LoginUserResult(ResultScaffold):
-    user_id: str = ''
+    user_id: int = 0
     private_hash: str = ''
-    username: str = ''
+    email: str = ''
+    website: str = ''
+    permission: UserPermission = UserPermission.NormalUser
+    bio: str = ''
+    source_url: str = ''
+    telegram_id: int = 0
     first_name: str = ''
     last_name: str = ''
-    bio: str = ''
-    website: str = ''
-    email: str = ''
-    telegram_id: int = 0
-    auth_key: str = ''
-    access_hash: str = ''
-    permission: int = 0
+    username: str = ''
+    created_at: str = ''
+    updated_at: str = ''
+    is_virtual: bool = False
+    created_by: int = 0
     
 class LoginUserResponse(RScaffold):
     result: Optional[LoginUserResult]
 
 
-class GetMeData(DScaffold):
-    username: str = ''
-    password: str = ''
-    auth_key: str = ''
-    access_hash: str = ''
-
+class GetMeData(EmptyScaffoldData):
     def get_action(self) -> int:
         return __ACTION_USER__
     
     def get_single_batch(self) -> str:
-        return __BATCH_LOGIN_USER__
+        return __BATCH_GET_ME__
     
     def get_response_type(self) -> type:
         return GetMeResponse
 
 class GetMeResult(ResultScaffold):
-    is_acceptable: bool = False
-    server_time: str = ''
+    user_id: int = 0
+    private_hash: str = ''
+    email: str = ''
+    website: str = ''
+    permission: UserPermission = UserPermission.NormalUser
+    bio: str = ''
+    source_url: str = ''
+    telegram_id: int = 0
+    first_name: str = ''
+    last_name: str = ''
+    username: str = ''
+    created_at: str = ''
+    updated_at: str = ''
+    is_virtual: bool = False
+    created_by: int = 0
     
 class GetMeResponse(RScaffold):
     result: Optional[LoginUserResult]

@@ -3,6 +3,7 @@ from .scaffold import(
     DScaffold,
     RScaffold,
     ResultScaffold,
+    EmptyScaffoldData,
 )
 from .versionData import(
     VersionData,
@@ -20,11 +21,16 @@ from .usersData import(
 from .clientBase import (
     ClientBase,
 )
+from .permissions import (
+    UserPermission,
+)
 
 __all__ = [
     Scaffold,
     DScaffold,
+    EmptyScaffoldData,
     RScaffold,
+    UserPermission,
     ClientBase,
     ResultScaffold,
     VersionData,

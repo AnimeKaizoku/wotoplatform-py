@@ -20,6 +20,8 @@ from .serverErrors import (
     InvalidFirstName,
     InvalidLastName,
     InvalidTitle,
+    AlreadyAuthorized,
+    NotAuthorized,
 )
 
 __ERRORS_MAP__ = {
@@ -38,6 +40,8 @@ __ERRORS_MAP__ = {
     ErrorCode.ErrInvalidFirstName: InvalidFirstName,
     ErrorCode.ErrInvalidLastName: InvalidLastName,
     ErrorCode.ErrInvalidTitle: InvalidTitle,
+    ErrorCode.ErrAlreadyAuthorized: AlreadyAuthorized,
+    ErrorCode.ErrNotAuthorized: NotAuthorized,
 }
 
 def parse_server_error(error: EndpointError) -> ServerException:
