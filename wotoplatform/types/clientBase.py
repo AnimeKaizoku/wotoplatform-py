@@ -1,5 +1,6 @@
 
+from . import Scaffold
 
 class ClientBase:
-    def send(self, scaffold) -> bytes:
+    async def send(self, _: Scaffold) -> bytes:
         pass
