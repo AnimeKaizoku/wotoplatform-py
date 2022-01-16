@@ -51,7 +51,7 @@ class ServerException(GeneralException):
         self.message = message
 
     def __str__(self):
-        return f"woto-platform says: [{self.code}] {self.message} Caused by {self.origin}."
+        return f"woto-platform says: [{self.code.name}] {self.message} Caused by {self.origin}."
 
 class EndpointError(BaseModel):
     code: int

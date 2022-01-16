@@ -2,17 +2,28 @@
 import json
 import socket
 import threading
-from wotoplatform.types.usersData import LoginUserData, LoginUserResult, RegisterUserResult
+from wotoplatform.types.errors.serverErrors import WrongUsername
+from wotoplatform.types.usersData import(
+    LoginUserData, 
+    LoginUserResult,
+    RegisterUserResponse, 
+    RegisterUserResult,
+)
 
 from wotoplatform.types.versionData import VersionResponse
 from .tools import (
     make_sure_num,
     make_sure_byte, 
 )
-from .types.errors.general import (
+from .types.errors import (
     ClientException,
+    InvalidTypeException,
+    ClientVersionNotAcceptable,
+    ClientNotInitializedException,
+    ClientAlreadyInitializedException,
 )
 from .types import (
+    ClientBase,
     DScaffold,
     RScaffold,
     Scaffold,
@@ -24,7 +35,7 @@ from .types import (
 __version__ = '0.0.10'
 
 
-class WotoClient():
+class WotoClient(ClientBase):
     username: str = ''
     password: str = ''
     endpoint_url: str = ''
@@ -38,7 +49,13 @@ class WotoClient():
 
     client_lock = threading.Lock()
 
-    def __init__(self, username: str, password: str, endpoint: str, port: int = 50100):
+    def __init__(
+        self, 
+        username: str, 
+        password: str, 
+        endpoint: str = 'wotoplatform.hakai.animekaizoku.com', 
+        port: int = 50100,
+    ):
         self.username = username
         self.password = password
 
@@ -48,28 +65,33 @@ class WotoClient():
     
     def start(self) -> None:
         if self.is_initialized:
-            raise ClientException('Client is already initialized.')
+            raise ClientAlreadyInitializedException()
         
         self.client_version = VersionData()
         self.is_initialized = True
         try:
             version_response = self.send_and_parse(self.client_version)
             if not isinstance(version_response, VersionResponse):
-                raise ClientException(f'Expected type of VersionResponse, got {type(version_response)}.')
+                raise InvalidTypeException(VersionResponse, type(version_response))
             
             if not version_response.success:
                 raise version_response.get_exception()
             
             if not version_response.result.is_acceptable:
-                raise ClientException(f'Client version is not acceptable.')
+                raise ClientVersionNotAcceptable()
         
-            self._login(
-                username=self.username,
-                password=self.password,
-                auth_key=self.auth_key,
-                access_hash=self.access_hash,
-            )
-
+            try:
+                self._login(
+                    username=self.username,
+                    password=self.password,
+                    auth_key=self.auth_key,
+                    access_hash=self.access_hash,
+                )
+            except WrongUsername:
+                self._register(
+                    username=self.username,
+                    password=self.password,
+                )
             
         except:
             self.is_initialized = False
@@ -105,10 +127,14 @@ class WotoClient():
                 password=password,
             )
         )
+        
+        if not isinstance(response, RegisterUserResponse):
+            raise InvalidTypeException(RegisterUserResponse, type(response))
 
         if not response.success:
             raise response.get_exception()
         
+
         return response.result
 
     def _write_data(self, data: bytes):
@@ -122,14 +148,11 @@ class WotoClient():
         return self.__woto_socket.recv(count)
     
     def send(self, scaffold: Scaffold) -> bytes:
-        if not scaffold:
-            return None
-        
         if not self.is_initialized:
-            raise ClientException('Client is not initialized.')
+            raise ClientNotInitializedException()
         
         if not isinstance(scaffold, Scaffold):
-            raise ClientException(f'Invalid type of data received as argument: {type(scaffold)}.')
+            raise InvalidTypeException(Scaffold, type(scaffold))
 
         with self.client_lock:
             self._write_data(scaffold.get_as_bytes())

@@ -17,11 +17,15 @@ from .usersData import(
     RegisterUserResponse,
     RegisterUserResult,
 )
+from .clientBase import (
+    ClientBase,
+)
 
 __all__ = [
     Scaffold,
     DScaffold,
     RScaffold,
+    ClientBase,
     ResultScaffold,
     VersionData,
     VersionResponse,

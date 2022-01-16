@@ -23,6 +23,12 @@ from .serverErrors import (
     InvalidLastName,
     InvalidTitle,
 )
+from .clientErrors import (
+    InvalidTypeException,
+    ClientVersionNotAcceptable,
+    ClientNotInitializedException,
+    ClientAlreadyInitializedException,
+)
 
 from .parser import (
     parse_server_error,
@@ -49,6 +55,10 @@ __all__ = [
     ClientException,
     ServerException,
     GeneralException,
+    InvalidTypeException,
+    ClientVersionNotAcceptable,
+    ClientNotInitializedException,
+    ClientAlreadyInitializedException,
     parse_server_error,
 ]
 
