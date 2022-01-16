@@ -2,11 +2,13 @@ import asyncio
 import json
 import socket
 import threading
+from typing import Union
+
+from wotoplatform.types.usersData import GetMeResult, GetUserInfoResult, ResolveUsernameResult
 from .utils import (
     WotoSocket,
 )
 from .tools import (
-    make_sure_num,
     make_sure_byte, 
 )
 from .types.errors import (
@@ -53,6 +55,11 @@ class WotoClient(ClientBase):
         endpoint: str = 'wotoplatform.hakai.animekaizoku.com', 
         port: int = 50100,
     ):
+        if not username:
+            raise ValueError('username cannot be empty')
+        if not password:
+            raise ValueError('password cannot be empty')
+        
         self.username = username
         self.password = password
 
@@ -68,7 +75,7 @@ class WotoClient(ClientBase):
         self.client_version = VersionData()
         self.is_initialized = True
         try:
-            version_response = self.send_and_parse(self.client_version)
+            version_response = await self.send_and_parse(self.client_version)
             if not isinstance(version_response, VersionResponse):
                 raise InvalidTypeException(VersionResponse, type(version_response))
             
@@ -165,6 +172,42 @@ class WotoClient(ClientBase):
             return None
         
         return response_type(**json.loads(await self.send(scaffold)))
+
+    async def get_me(self) -> GetMeResult:
+        pass
+
+    async def get_user_info(self, user_id: Union[int, str]) -> GetUserInfoResult:
+        pass
+
+    async def resolve_username(self, username: str) -> ResolveUsernameResult:
+        pass
+
+
+    async def get_group_call_info(self):
+        pass
+    
+    async def create_group_call(self):
+        pass
+
+
+    async def delete_group_call(self):
+        pass
+
+    async def get_group_call_queue(self):
+        pass
+
+    async def get_group_call_history(self):
+        pass
+
+    async def add_to_queue(self):
+        pass
+
+
+    async def create_new_media(self):
+        pass
+
+    
+    
 
 
 

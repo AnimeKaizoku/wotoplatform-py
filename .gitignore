@@ -23,5 +23,5 @@ wheels/
 .installed.cfg
 *.egg
 MANIFEST
+config.ini
 
-tests/
