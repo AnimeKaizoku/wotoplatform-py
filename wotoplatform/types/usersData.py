@@ -1,4 +1,5 @@
-import typing
+from typing import Optional
+
 from .scaffold import (
     DScaffold,
     RScaffold,
@@ -28,11 +29,14 @@ class RegisterUserData(DScaffold):
         return RegisterUserResponse
     
 class RegisterUserResult(ResultScaffold):
-    is_acceptable: bool = False
-    server_time: str = ''
+    username: str = ''
+    first_name: str = ''
+    last_name: str = ''
+    permission: int = 0
+    bio: str = ''
     
 class RegisterUserResponse(RScaffold):
-    result: typing.Optional[RegisterUserResult]
+    result: Optional[RegisterUserResult]
 
 
 class LoginUserData(DScaffold):
@@ -51,11 +55,21 @@ class LoginUserData(DScaffold):
         return LoginUserResponse
 
 class LoginUserResult(ResultScaffold):
-    is_acceptable: bool = False
-    server_time: str = ''
+    user_id: str = ''
+    private_hash: str = ''
+    username: str = ''
+    first_name: str = ''
+    last_name: str = ''
+    bio: str = ''
+    website: str = ''
+    email: str = ''
+    telegram_id: int = 0
+    auth_key: str = ''
+    access_hash: str = ''
+    permission: int = 0
     
 class LoginUserResponse(RScaffold):
-    result: typing.Optional[LoginUserResult]
+    result: Optional[LoginUserResult]
 
 
 class GetMeData(DScaffold):
@@ -78,7 +92,7 @@ class GetMeResult(ResultScaffold):
     server_time: str = ''
     
 class GetMeResponse(RScaffold):
-    result: typing.Optional[LoginUserResult]
+    result: Optional[LoginUserResult]
 
 
 class GetUserInfoData(DScaffold):
@@ -101,7 +115,7 @@ class GetUserInfoResult(ResultScaffold):
     server_time: str = ''
     
 class GetUserInfoResponse(RScaffold):
-    result: typing.Optional[LoginUserResult]
+    result: Optional[LoginUserResult]
 
 
 class ResolveUsernameData(DScaffold):
@@ -124,5 +138,5 @@ class ResolveUsernameResult(ResultScaffold):
     server_time: str = ''
     
 class ResolveUsernameResponse(RScaffold):
-    result: typing.Optional[LoginUserResult]
+    result: Optional[LoginUserResult]
 
