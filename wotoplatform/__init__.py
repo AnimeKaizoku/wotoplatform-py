@@ -3,7 +3,7 @@ import threading
 from typing import Union
 
 from wotoplatform.types.usersData import(
-    ChangeUserBioData, GetMeData, GetMeResult, GetUserInfoResult, ResolveUsernameResult
+    ChangeNamesData, ChangeUserBioData, GetMeData, GetMeResult, GetUserInfoResult, ResolveUsernameResult
 )
 from .utils import (
     WotoSocket,
@@ -181,8 +181,30 @@ class WotoClient(ClientBase):
         
         return response.result
     
-    async def change_user_bio(self, bio: str) -> bool:
-        response = await self.send_and_parse(ChangeUserBioData(bio=bio))
+    async def change_user_bio(self, bio: str, user_id: int = 0) -> bool:
+        response = await self.send_and_parse(
+            ChangeUserBioData(
+                user_id=user_id,
+                bio=bio,
+            ),
+        )
+
+        if not response.success:
+            raise response.get_exception()
+        
+        return response.result
+
+    async def change_names(self, first_name: str, last_name: str, user_id: int = 0) -> bool:
+        if not first_name and not last_name:
+            return False
+        
+        response = await self.send_and_parse(
+            ChangeNamesData(
+                user_id=user_id,
+                first_name=first_name,
+                last_name=last_name,
+            ),
+        )
 
         if not response.success:
             raise response.get_exception()

@@ -43,6 +43,9 @@ class ErrorCode(Enum):
     ErrNotAuthorized = 16
     ErrNotModified = 17
     ErrBioTooLong = 18
+    ErrUserNotFound = 19
+    ErrFirstNameTooLong = 20
+    ErrLastNameTooLong = 21
 
 class ServerException(GeneralException):
     """

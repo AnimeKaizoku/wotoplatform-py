@@ -1,20 +1,6 @@
 
 from .general import ServerException, ErrorCode
 
-#	ErrUnknown  => 1
-#	ErrServerUnavailable => 2
-#	ErrInvalidUsernameFormat    => 3
-#	ErrInvalidPasswordFormat    => 4
-#	ErrUsernameExists        => 5
-#	ErrWrongUsername    => 6
-#	ErrWrongPassword    => 7
-#	ErrInvalidAuthKeyFormat   => 8
-#	ErrInvalidAccessHashFormat  => 9
-#	ErrWrongAuthKey   => 10
-#	ErrLoginAccessHashExpired    => 11
-#	ErrInvalidFirstName    => 12
-#	ErrInvalidLastName   => 13
-
 
 class UnknownError(ServerException):
     message: str = ''
@@ -189,3 +175,21 @@ class BioTooLong(ServerException):
         self.message = message
         self.origin = origin
 
+class UserNotFound(ServerException):
+    message: str = ''
+    origin: str = ''
+
+    def __init__(self, message: str, origin: str):
+        self.code = ErrorCode.ErrUserNotFound
+        self.message = message
+        self.origin = origin
+
+
+class FirstNameTooLong(ServerException):
+    message: str = ''
+    origin: str = ''
+
+    def __init__(self, message: str, origin: str):
+        self.code = ErrorCode.ErrFirstNameTooLong
+        self.message = message
+        self.origin = origin

@@ -8,13 +8,15 @@ from . import (
 )
 from .permissions import UserPermission
 
-__BATCH_REGISTER_USER__ = 'register_user'
-__BATCH_LOGIN_USER__ = 'login_user'
-__BATCH_GET_ME__ = 'get_me'
-__BATCH_CHANGE_USER_BIO__ = 'change_user_bio'
-__BATCH_CHANGE_USER_INFO__ = 'change_user_info'
-__BATCH_GET_USER_INFO__ = 'get_user_info'
-__BATCH_RESOLVE_USERNAME__ = 'resolve_username'
+__BATCH_REGISTER_USER__     = 'register_user'
+__BATCH_LOGIN_USER__        = 'login_user'
+__BATCH_GET_ME__            = 'get_me'
+__BATCH_CHANGE_USER_BIO__   = 'change_user_bio'
+__BATCH_CHANGE_NAMES__      = 'change_names'
+__BATCH_CHANGE_USER_INFO__  = 'change_user_info'
+__BATCH_GET_USER_INFO__     = 'get_user_info'
+__BATCH_RESOLVE_USERNAME__  = 'resolve_username'
+
 __ACTION_USER__ = 2
 
 class RegisterUserData(DScaffold):
@@ -127,6 +129,7 @@ class GetMeResponse(RScaffold):
 
 
 class ChangeUserBioData(DScaffold):
+    user_id: int = 0
     bio: str = ''
 
     def get_action(self) -> int:
@@ -134,6 +137,24 @@ class ChangeUserBioData(DScaffold):
     
     def get_single_batch(self) -> str:
         return __BATCH_CHANGE_USER_BIO__
+    
+    def get_response_type(self) -> type:
+        return ChangeUserBioResponse
+
+class ChangeUserBioResponse(RScaffold):
+    result: Optional[bool]
+
+
+class ChangeNamesData(DScaffold):
+    user_id: int = 0
+    first_name: str = ''
+    last_name: str = ''
+
+    def get_action(self) -> int:
+        return __ACTION_USER__
+    
+    def get_single_batch(self) -> str:
+        return __BATCH_CHANGE_NAMES__
     
     def get_response_type(self) -> type:
         return ChangeUserBioResponse
