@@ -41,6 +41,8 @@ class ErrorCode(Enum):
     ErrInvalidTitle = 14
     ErrAlreadyAuthorized = 15
     ErrNotAuthorized = 16
+    ErrNotModified = 17
+    ErrBioTooLong = 18
 
 class ServerException(GeneralException):
     """

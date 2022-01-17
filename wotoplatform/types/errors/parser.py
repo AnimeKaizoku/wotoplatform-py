@@ -22,6 +22,8 @@ from .serverErrors import (
     InvalidTitle,
     AlreadyAuthorized,
     NotAuthorized,
+    NotModified,
+    BioTooLong,
 )
 
 __ERRORS_MAP__ = {
@@ -42,6 +44,8 @@ __ERRORS_MAP__ = {
     ErrorCode.ErrInvalidTitle: InvalidTitle,
     ErrorCode.ErrAlreadyAuthorized: AlreadyAuthorized,
     ErrorCode.ErrNotAuthorized: NotAuthorized,
+    ErrorCode.ErrNotModified: NotModified,
+    ErrorCode.ErrBioTooLong: BioTooLong,
 }
 
 def parse_server_error(error: EndpointError) -> ServerException:

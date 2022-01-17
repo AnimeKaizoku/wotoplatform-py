@@ -170,4 +170,22 @@ class NotAuthorized(ServerException):
         self.message = message
         self.origin = origin
 
+class NotModified(ServerException):
+    message: str = ''
+    origin: str = ''
+
+    def __init__(self, message: str, origin: str):
+        self.code = ErrorCode.ErrNotModified
+        self.message = message
+        self.origin = origin
+
+
+class BioTooLong(ServerException):
+    message: str = ''
+    origin: str = ''
+
+    def __init__(self, message: str, origin: str):
+        self.code = ErrorCode.ErrBioTooLong
+        self.message = message
+        self.origin = origin
 
