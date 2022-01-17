@@ -17,6 +17,8 @@ from .usersData import(
     RegisterUserData,
     RegisterUserResponse,
     RegisterUserResult,
+    ChangeUserBioData,
+    ChangeUserBioResponse,
 )
 from .clientBase import (
     ClientBase,
@@ -42,4 +44,6 @@ __all__ = [
     RegisterUserData,
     RegisterUserResponse,
     RegisterUserResult,
+    ChangeUserBioData,
+    ChangeUserBioResponse,
 ]
