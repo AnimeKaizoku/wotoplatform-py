@@ -32,7 +32,7 @@ from .types import (
     RegisterUserResult,
 )
 
-__version__ = '0.0.11'
+__version__ = '0.0.12'
 
 class WotoClient(ClientBase):
     username: str = ''

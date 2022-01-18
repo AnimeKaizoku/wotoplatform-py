@@ -55,6 +55,11 @@ class ResultScaffold(BaseModel):
         from the server as the result itself.
     """
 
+    def __str__(self) -> str:
+        try:
+            return self.json(indent=4, ensure_ascii=False)
+        except Exception: return super().__str__()
+
 class RScaffold(Scaffold, BaseModel):
     """
     RSScaffold is a base class for all data classes that need to be received 
