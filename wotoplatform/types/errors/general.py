@@ -46,6 +46,7 @@ class ErrorCode(Enum):
     ErrUserNotFound = 19
     ErrFirstNameTooLong = 20
     ErrLastNameTooLong = 21
+    ErrInvalidUsernameAndUserId = 22
 
 class ServerException(GeneralException):
     """

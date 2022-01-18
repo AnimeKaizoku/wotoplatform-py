@@ -164,26 +164,82 @@ class ChangeUserBioResponse(RScaffold):
 
 
 class GetUserInfoData(DScaffold):
+    user_id: int = 0
     username: str = ''
-    password: str = ''
-    auth_key: str = ''
-    access_hash: str = ''
 
     def get_action(self) -> int:
         return __ACTION_USER__
     
     def get_single_batch(self) -> str:
-        return __BATCH_LOGIN_USER__
+        return __BATCH_GET_USER_INFO__
     
     def get_response_type(self) -> type:
         return GetUserInfoResponse
 
 class GetUserInfoResult(ResultScaffold):
-    is_acceptable: bool = False
-    server_time: str = ''
+    """
+	UserId             wv.PublicUserId   `json:"user_id"`
+	Email              string            `json:"email"`
+	Region             string            `json:"region"`
+	Language           string            `json:"language"`
+	Birthday           string            `json:"birthday"`
+	AnilistUrl         string            `json:"anilist_url"`
+	MyAnimelistUrl     string            `json:"my_animelist_url"`
+	RedditUrl          string            `json:"reddit_url"`
+	GithubUrl          string            `json:"github_url"`
+	GitlabUrl          string            `json:"gitlab_url"`
+	FavoriteColor      string            `json:"favorite_color"`
+	FavoriteMusic      string            `json:"favorite_music"`
+	FavoriteAnime      string            `json:"favorite_anime"`
+	FavoriteMovie      string            `json:"favorite_movie"`
+	FavoriteFood       string            `json:"favorite_food"`
+	FavoriteSeries     string            `json:"favorite_series"`
+	FavoriteLightNovel string            `json:"favorite_light_novel"`
+	FavoriteNovel      string            `json:"favorite_novel"`
+	Website            string            `json:"website"`
+	Permission         wv.UserPermission `json:"permission"`
+	Bio                string            `json:"bio"`
+	SourceUrl          string            `json:"source_url"`
+	TelegramId         int64             `json:"telegram_id"`
+	FirstName          string            `json:"first_name"`
+	LastName           string            `json:"last_name"`
+	Username           string            `json:"username"`
+	CreatedAt          string            `json:"created_at"`
+	UpdatedAt          string            `json:"updated_at"`
+	IsVirtual          bool              `json:"is_virtual"`
+    """
+    user_id: int = 0
+    email: str = ''
+    region: str = ''
+    language: str = ''
+    birthday: str = ''
+    anilist_url: str = ''
+    my_animelist_url: str = ''
+    reddit_url: str = ''
+    github_url: str = ''
+    gitlab_url: str = ''
+    favorite_color: str = ''
+    favorite_music: str = ''
+    favorite_anime: str = ''
+    favorite_movie: str = ''
+    favorite_food: str = ''
+    favorite_series: str = ''
+    favorite_light_novel: str = ''
+    favorite_novel: str = ''
+    website: str = ''
+    permission: UserPermission = UserPermission.NormalUser
+    bio: str = ''
+    source_url: str = ''
+    telegram_id: int = 0
+    first_name: str = ''
+    last_name: str = ''
+    username: str = ''
+    created_at: str = ''
+    updated_at: str = ''
+    is_virtual: bool = False
     
 class GetUserInfoResponse(RScaffold):
-    result: Optional[LoginUserResult]
+    result: Optional[GetUserInfoResult]
 
 
 class ResolveUsernameData(DScaffold):

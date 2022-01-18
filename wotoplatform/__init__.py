@@ -3,7 +3,7 @@ import threading
 from typing import Union
 
 from wotoplatform.types.usersData import(
-    ChangeNamesData, ChangeUserBioData, GetMeData, GetMeResult, GetUserInfoResult, ResolveUsernameResult
+    ChangeNamesData, ChangeUserBioData, GetMeData, GetMeResult, GetUserInfoData, GetUserInfoResult, ResolveUsernameResult
 )
 from .utils import (
     WotoSocket,
@@ -32,7 +32,7 @@ from .types import (
     RegisterUserResult,
 )
 
-__version__ = '0.0.10'
+__version__ = '0.0.11'
 
 class WotoClient(ClientBase):
     username: str = ''
@@ -212,7 +212,25 @@ class WotoClient(ClientBase):
         return response.result
 
     async def get_user_info(self, user_id: Union[int, str]) -> GetUserInfoResult:
-        pass
+        if isinstance(user_id, str):
+            try:
+                user_id = int(user_id)
+            except ValueError: pass
+        
+        data: GetUserInfoData = None
+        if isinstance(user_id, int):
+            data = GetUserInfoData(user_id=user_id)
+        elif isinstance(user_id, str):
+            data = GetUserInfoData(username=user_id)
+        else:
+            raise InvalidTypeException(int, type(user_id))
+        
+        response = await self.send_and_parse(data)
+
+        if not response.success:
+            raise response.get_exception()
+        
+        return response.result
 
     async def resolve_username(self, username: str) -> ResolveUsernameResult:
         pass

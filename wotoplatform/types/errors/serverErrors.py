@@ -193,3 +193,21 @@ class FirstNameTooLong(ServerException):
         self.code = ErrorCode.ErrFirstNameTooLong
         self.message = message
         self.origin = origin
+
+class LastNameTooLong(ServerException):
+    message: str = ''
+    origin: str = ''
+
+    def __init__(self, message: str, origin: str):
+        self.code = ErrorCode.ErrLastNameTooLong
+        self.message = message
+        self.origin = origin
+
+class InvalidUsernameAndUserId(ServerException):
+    message: str = ''
+    origin: str = ''
+
+    def __init__(self, message: str, origin: str):
+        self.code = ErrorCode.ErrInvalidUsernameAndUserId
+        self.message = message
+        self.origin = origin

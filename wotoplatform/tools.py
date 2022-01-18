@@ -11,6 +11,5 @@ def make_sure_byte(b: bytes, length: int) -> bytes:
     the returned value's length will be exactly the same as length.
     """
     tmp_b = b
-    while len(b) < length:
-        tmp_b = tmp_b + b' '
+    while len(b) < length: tmp_b = tmp_b + b' '
     return bytes(tmp_b, 'utf-8')
