@@ -1,6 +1,8 @@
 import pytest
 from wotoplatform import WotoClient
-from wotoplatform.types.errors.serverErrors import NotModified
+from wotoplatform.types.errors import (
+    NotModified
+)
 from .myconfig import the_config
 
 __TEST_BIO_VALUE01__ = 'This is my test bio'
@@ -51,7 +53,7 @@ async def test_woto_client01():
     assert fav01.favorite_value == 'One Piece'
 
     try:
-        await client.set_user_favorite('light novel', 'Mushoku Tensei')
+        await client.set_user_favorite('light-novel', 'Mushoku Tensei')
     except NotModified: pass
 
     fav02 = await client.get_user_favorite('light novel')
