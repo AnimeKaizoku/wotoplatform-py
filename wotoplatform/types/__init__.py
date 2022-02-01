@@ -1,31 +1,8 @@
-from .scaffold import(
-    Scaffold,
-    DScaffold,
-    RScaffold,
-    ResultScaffold,
-    EmptyScaffoldData,
-)
-from .versionData import(
-    VersionData,
-    VersionResponse,
-    VersionResult,
-)
-from .usersData import(
-    LoginUserData,
-    LoginUserResponse,
-    LoginUserResult,
-    RegisterUserData,
-    RegisterUserResponse,
-    RegisterUserResult,
-    ChangeUserBioData,
-    ChangeUserBioResponse,
-)
-from .clientBase import (
-    ClientBase,
-)
-from .permissions import (
-    UserPermission,
-)
+from .scaffold import *
+from .versionData import *
+from .usersData import *
+from .clientBase import *
+from .permissions import  *
 
 __all__ = [
     Scaffold,
@@ -46,4 +23,12 @@ __all__ = [
     RegisterUserResult,
     ChangeUserBioData,
     ChangeUserBioResponse,
+    GetUserFavoriteData,
+    GetUserFavoriteResponse,
+    GetUserFavoriteResult,
+    GetUserFavoriteCountData,
+    GetUserFavoriteCountResponse,
+    GetUserFavoriteCountResult,
+    SetUserFavoriteData,
+    SetUserFavoriteResponse,
 ]

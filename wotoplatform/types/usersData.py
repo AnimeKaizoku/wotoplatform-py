@@ -8,14 +8,17 @@ from . import (
 )
 from .permissions import UserPermission
 
-__BATCH_REGISTER_USER__     = 'register_user'
-__BATCH_LOGIN_USER__        = 'login_user'
-__BATCH_GET_ME__            = 'get_me'
-__BATCH_CHANGE_USER_BIO__   = 'change_user_bio'
-__BATCH_CHANGE_NAMES__      = 'change_names'
-__BATCH_CHANGE_USER_INFO__  = 'change_user_info'
-__BATCH_GET_USER_INFO__     = 'get_user_info'
-__BATCH_RESOLVE_USERNAME__  = 'resolve_username'
+__BATCH_REGISTER_USER__             = 'register_user'
+__BATCH_LOGIN_USER__                = 'login_user'
+__BATCH_GET_ME__                    = 'get_me'
+__BATCH_CHANGE_USER_BIO__           = 'change_user_bio'
+__BATCH_CHANGE_NAMES__              = 'change_names'
+__BATCH_CHANGE_USER_INFO__          = 'change_user_info'
+__BATCH_GET_USER_INFO__             = 'get_user_info'
+__BATCH_RESOLVE_USERNAME__          = 'resolve_username'
+__BATCH_GET_USER_FAVORITE__         = 'get_user_favorite'
+__BATCH_GET_USER_FAVORITE_COUNT__   = 'get_user_favorite_count'
+__BATCH_SET_USER_FAVORITE__         = 'get_user_favorite'
 
 __ACTION_USER__ = 2
 
@@ -233,3 +236,61 @@ class ResolveUsernameResult(ResultScaffold):
 class ResolveUsernameResponse(RScaffold):
     result: Optional[LoginUserResult]
 
+
+class GetUserFavoriteData(DScaffold):
+    user_id: int = 0
+    favorite_key: str = ''
+
+    def get_action(self) -> int:
+        return __ACTION_USER__
+    
+    def get_single_batch(self) -> str:
+        return __BATCH_GET_USER_FAVORITE__
+    
+    def get_response_type(self) -> type:
+        return GetUserFavoriteResponse
+
+
+class GetUserFavoriteResult(ResultScaffold):
+    favorite_value: str = ''
+
+class GetUserFavoriteResponse(RScaffold):
+    result: Optional[GetUserFavoriteResult]
+
+
+class GetUserFavoriteCountData(DScaffold):
+    user_id: int = 0
+
+    def get_action(self) -> int:
+        return __ACTION_USER__
+    
+    def get_single_batch(self) -> str:
+        return __BATCH_GET_USER_FAVORITE_COUNT__
+    
+    def get_response_type(self) -> type:
+        return GetUserFavoriteCountResponse
+
+
+class GetUserFavoriteCountResult(ResultScaffold):
+    favorites_count: int = 0
+
+class GetUserFavoriteCountResponse(RScaffold):
+    result: Optional[GetUserFavoriteCountResult]
+
+class SetUserFavoriteData(DScaffold):
+    user_id: int = 0
+    favorite_key: str = ''
+    favorite_value: str = ''
+
+    def get_action(self) -> int:
+        return __ACTION_USER__
+    
+    def get_single_batch(self) -> str:
+        return __BATCH_SET_USER_FAVORITE__
+    
+    def get_response_type(self) -> type:
+        return SetUserFavoriteResponse
+
+
+class SetUserFavoriteResponse(RScaffold):
+    result: Optional[bool]

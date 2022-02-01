@@ -2,9 +2,6 @@ import json
 import threading
 from typing import Union
 
-from wotoplatform.types.usersData import(
-    ChangeNamesData, ChangeUserBioData, GetMeData, GetMeResult, GetUserInfoData, GetUserInfoResult, ResolveUsernameResult
-)
 from .utils import (
     WotoSocket,
 )
@@ -30,9 +27,20 @@ from .types import (
     LoginUserResult,
     RegisterUserResponse, 
     RegisterUserResult,
+    GetUserFavoriteData,
+    GetUserFavoriteResult,
+    GetUserFavoriteCountResult,
+    GetUserFavoriteCountData,
+    ChangeNamesData, 
+    ChangeUserBioData, 
+    GetMeData, 
+    GetMeResult, 
+    GetUserInfoData, 
+    GetUserInfoResult, 
+    SetUserFavoriteData,
 )
 
-__version__ = '0.0.12'
+__version__ = '0.0.13'
 
 class WotoClient(ClientBase):
     username: str = ''
@@ -98,10 +106,25 @@ class WotoClient(ClientBase):
                     password=self.password,
                 )
             
+            self.is_logged_in = True
+            
         except:
             self.is_initialized = False
             raise
 
+    async def restart(self) -> None:
+        if self.is_initialized:
+            self.is_initialized = False
+        
+        if self.is_logged_in:
+            self.is_logged_in = False
+        
+        if self.__woto_socket:
+            await self.__woto_socket.close()
+        
+        await self.start()
+        
+        
     
     async def _login(self, username: str, password: str, auth_key:str, access_hash: str) -> LoginUserResult:
         """
@@ -232,35 +255,56 @@ class WotoClient(ClientBase):
         
         return response.result
 
-    async def resolve_username(self, username: str) -> ResolveUsernameResult:
-        pass
+    async def get_user_favorite(self, key: str, user_id: int = 0) -> GetUserFavoriteResult:
+        response = await self.send_and_parse(
+            GetUserFavoriteData(
+                user_id=user_id,
+                key=key,
+            ),
+        )
 
-
-    async def get_group_call_info(self):
-        pass
+        if not response.success:
+            raise response.get_exception()
+        
+        return response.result
     
-    async def create_group_call(self):
-        pass
+    async def get_user_favorite_value(self, key: str, user_id: int = 0) -> str:
+        fav = self.get_user_favorite(key, user_id)
+        if isinstance(fav, GetUserFavoriteResult):
+            return fav.favorite_value
+        
+        raise InvalidTypeException(GetUserFavoriteResult, type(fav))
+
+    async def get_user_favorites_count(self, user_id: int = 0) -> int:
+        response = await self.send_and_parse(
+            GetUserFavoriteCountData(
+                user_id=user_id,
+            ),
+        )
+
+        if not response.success:
+            raise response.get_exception()
+        
+        if isinstance(response.result, GetUserFavoriteCountResult):
+            return response.result.favorites_count
+        
+        return 0
+
+    async def set_user_favorite(self, key: str, value: str, user_id: int = 0) -> bool:
+        response = await self.send_and_parse(
+            SetUserFavoriteData(
+                user_id=user_id,
+                favorite_key=key,
+                favorite_value=value,
+            ),
+        )
+
+        if not response.success:
+            raise response.get_exception()
+        
+        return response.result
 
 
-    async def delete_group_call(self):
-        pass
-
-    async def get_group_call_queue(self):
-        pass
-
-    async def get_group_call_history(self):
-        pass
-
-    async def add_to_queue(self):
-        pass
-
-
-    async def create_new_media(self):
-        pass
-
-    
-    
 
 
 

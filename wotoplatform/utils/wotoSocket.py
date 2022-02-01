@@ -30,3 +30,11 @@ class WotoSocket:
     async def recv(self, size: int) -> bytes:
         return await self.__reader.read(size)
     
+    async def close(self) -> None:
+        try:
+            await self.__writer.close()
+            self.__reader = None
+            self.__writer = None
+        except Exception: pass
+        
+    
