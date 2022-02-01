@@ -253,6 +253,7 @@ class GetUserFavoriteData(DScaffold):
 
 class GetUserFavoriteResult(ResultScaffold):
     favorite_value: str = ''
+    updated_at: str = ''
 
 class GetUserFavoriteResponse(RScaffold):
     result: Optional[GetUserFavoriteResult]

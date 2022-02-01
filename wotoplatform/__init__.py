@@ -40,7 +40,7 @@ from .types import (
     SetUserFavoriteData,
 )
 
-__version__ = '0.0.13'
+__version__ = '0.0.14'
 
 class WotoClient(ClientBase):
     username: str = ''
@@ -51,6 +51,8 @@ class WotoClient(ClientBase):
     is_initialized: bool = False
     is_logged_in: bool = False
     client_version: VersionData = None
+    __endpoint: str = ''
+    __port: int = 0
     __woto_socket: WotoSocket = None
     __MAX_DATA_COUNTER = 8
 
@@ -70,12 +72,17 @@ class WotoClient(ClientBase):
         
         self.username = username
         self.password = password
+        self.__endpoint = endpoint
+        self.__port = port
 
         self.__woto_socket = WotoSocket(host=endpoint, port=port)
     
     async def start(self) -> None:
         if self.is_initialized:
             raise ClientAlreadyInitializedException()
+        
+        if not self.__woto_socket:
+            self.__woto_socket = WotoSocket(host=self.__endpoint, port=self.__port)
         
         if not self.__woto_socket.is_initialized:
             await self.__woto_socket.connect()
@@ -111,8 +118,8 @@ class WotoClient(ClientBase):
         except:
             self.is_initialized = False
             raise
-
-    async def restart(self) -> None:
+    
+    async def stop(self) -> None:
         if self.is_initialized:
             self.is_initialized = False
         
@@ -122,8 +129,7 @@ class WotoClient(ClientBase):
         if self.__woto_socket:
             await self.__woto_socket.close()
         
-        await self.start()
-        
+        self.__woto_socket = None
         
     
     async def _login(self, username: str, password: str, auth_key:str, access_hash: str) -> LoginUserResult:
