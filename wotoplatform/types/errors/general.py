@@ -47,6 +47,11 @@ class ErrorCode(Enum):
     ErrFirstNameTooLong = 20
     ErrLastNameTooLong = 21
     ErrInvalidUsernameAndUserId = 22
+    ErrMethodNotImplemented = 23
+    ErrPermissionDenied = 24
+    ErrKeyNotFound = 25
+    ErrInvalidTelegramId = 26
+    ErrInvalidEmail = 27
 
 class ServerException(GeneralException):
     """

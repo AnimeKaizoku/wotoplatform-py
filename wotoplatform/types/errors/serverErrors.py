@@ -211,3 +211,48 @@ class InvalidUsernameAndUserId(ServerException):
         self.code = ErrorCode.ErrInvalidUsernameAndUserId
         self.message = message
         self.origin = origin
+
+class MethodNotImplemented(ServerException):
+    message: str = ''
+    origin: str = ''
+
+    def __init__(self, message: str, origin: str):
+        self.code = ErrorCode.ErrMethodNotImplemented
+        self.message = message
+        self.origin = origin
+
+class PermissionDenied(ServerException):
+    message: str = ''
+    origin: str = ''
+
+    def __init__(self, message: str, origin: str):
+        self.code = ErrorCode.ErrPermissionDenied
+        self.message = message
+        self.origin = origin
+
+class KeyNotFound(ServerException):
+    message: str = ''
+    origin: str = ''
+
+    def __init__(self, message: str, origin: str):
+        self.code = ErrorCode.ErrKeyNotFound
+        self.message = message
+        self.origin = origin
+
+class InvalidTelegramId(ServerException):
+    message: str = ''
+    origin: str = ''
+
+    def __init__(self, message: str, origin: str):
+        self.code = ErrorCode.ErrInvalidTelegramId
+        self.message = message
+        self.origin = origin
+
+class InvalidEmail(ServerException):
+    message: str = ''
+    origin: str = ''
+
+    def __init__(self, message: str, origin: str):
+        self.code = ErrorCode.ErrInvalidEmail
+        self.message = message
+        self.origin = origin

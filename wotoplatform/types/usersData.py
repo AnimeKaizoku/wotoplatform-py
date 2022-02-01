@@ -18,7 +18,7 @@ __BATCH_GET_USER_INFO__             = 'get_user_info'
 __BATCH_RESOLVE_USERNAME__          = 'resolve_username'
 __BATCH_GET_USER_FAVORITE__         = 'get_user_favorite'
 __BATCH_GET_USER_FAVORITE_COUNT__   = 'get_user_favorite_count'
-__BATCH_SET_USER_FAVORITE__         = 'get_user_favorite'
+__BATCH_SET_USER_FAVORITE__         = 'set_user_favorite'
 
 __ACTION_USER__ = 2
 

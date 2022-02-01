@@ -42,3 +42,20 @@ async def test_woto_client01():
     assert user_info.last_name == __TEST_LAST_NAME_VALUE01__
     assert user_info.bio == __TEST_BIO_VALUE01__
 
+    try:
+        await client.set_user_favorite('anime', 'One Piece')
+    except NotModified: pass
+
+    fav01 = await client.get_user_favorite('anime')
+
+    assert fav01.favorite_value == 'One Piece'
+
+    try:
+        await client.set_user_favorite('light novel', 'Mushoku Tensei')
+    except NotModified: pass
+
+    fav02 = await client.get_user_favorite('light novel')
+
+    assert fav02.favorite_value == 'Mushoku Tensei'
+    
+

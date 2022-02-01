@@ -259,7 +259,7 @@ class WotoClient(ClientBase):
         response = await self.send_and_parse(
             GetUserFavoriteData(
                 user_id=user_id,
-                key=key,
+                favorite_key=key,
             ),
         )
 
@@ -269,7 +269,7 @@ class WotoClient(ClientBase):
         return response.result
     
     async def get_user_favorite_value(self, key: str, user_id: int = 0) -> str:
-        fav = self.get_user_favorite(key, user_id)
+        fav = await self.get_user_favorite(key, user_id)
         if isinstance(fav, GetUserFavoriteResult):
             return fav.favorite_value
         

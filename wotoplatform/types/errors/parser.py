@@ -5,29 +5,7 @@ from .general import (
     ServerException,
 )
 
-from .serverErrors import (
-    UnknownError,
-    ServerUnavailable,
-    InvalidUsernameFormat,
-    InvalidPasswordFormat,
-    UsernameExists,
-    WrongUsername,
-    WrongPassword,
-    InvalidAuthKeyFormat,
-    InvalidAccessHashFormat,
-    WrongAuthKey,
-    LoginAccessHashExpired,
-    InvalidFirstName,
-    InvalidLastName,
-    InvalidTitle,
-    AlreadyAuthorized,
-    NotAuthorized,
-    NotModified,
-    BioTooLong,
-    FirstNameTooLong,
-    LastNameTooLong,
-    InvalidUsernameAndUserId,
-)
+from .serverErrors import *
 
 __ERRORS_MAP__ = {
     ErrorCode.NoError: None,
@@ -52,6 +30,11 @@ __ERRORS_MAP__ = {
     ErrorCode.ErrFirstNameTooLong: FirstNameTooLong,
     ErrorCode.ErrLastNameTooLong: LastNameTooLong,
     ErrorCode.ErrInvalidUsernameAndUserId: InvalidUsernameAndUserId,
+    ErrorCode.ErrMethodNotImplemented: MethodNotImplemented,
+    ErrorCode.ErrPermissionDenied: PermissionDenied,
+    ErrorCode.ErrKeyNotFound: KeyNotFound,
+    ErrorCode.ErrInvalidTelegramId: InvalidTelegramId,
+    ErrorCode.ErrInvalidEmail: InvalidEmail,
 }
 
 def parse_server_error(error: EndpointError) -> ServerException:
