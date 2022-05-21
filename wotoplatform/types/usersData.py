@@ -8,6 +8,8 @@ from . import (
 )
 from .permissions import UserPermission
 
+
+
 __BATCH_REGISTER_USER__             = 'register_user'
 __BATCH_LOGIN_USER__                = 'login_user'
 __BATCH_GET_ME__                    = 'get_me'
@@ -19,6 +21,8 @@ __BATCH_RESOLVE_USERNAME__          = 'resolve_username'
 __BATCH_GET_USER_FAVORITE__         = 'get_user_favorite'
 __BATCH_GET_USER_FAVORITE_COUNT__   = 'get_user_favorite_count'
 __BATCH_SET_USER_FAVORITE__         = 'set_user_favorite'
+__BATCH_DELETE_USER_FAVORITE__      = 'delete_user_favorite'
+
 
 __ACTION_USER__ = 2
 
@@ -295,3 +299,58 @@ class SetUserFavoriteData(DScaffold):
 
 class SetUserFavoriteResponse(RScaffold):
     result: Optional[bool]
+
+class DeleteUserFavoriteData(DScaffold):
+    user_id: int = 0
+    favorite_key: str = ''
+
+    def get_action(self) -> int:
+        return __ACTION_USER__
+    
+    def get_single_batch(self) -> str:
+        return __BATCH_DELETE_USER_FAVORITE__
+    
+    def get_response_type(self) -> type:
+        return DeleteUserFavoriteResponse
+
+class DeleteUserFavoriteResponse(RScaffold):
+    result: Optional[bool]
+
+class ResolveUsernameData(DScaffold):
+    username: str = ''
+
+    def get_action(self) -> int:
+        return __ACTION_USER__
+    
+    def get_single_batch(self) -> str:
+        return __BATCH_DELETE_USER_FAVORITE__
+    
+    def get_response_type(self) -> type:
+        return ResolveUsernameResponse
+
+class ResolveUsernameResponse(RScaffold):
+    result: Optional[GetUserInfoResult]
+
+
+class LikedItem(DScaffold):
+    """
+    type LikedListElement struct {
+        UniqueId     string       `json:"unique_id" gorm:"primaryKey"`
+        OwnerId      PublicUserId `json:"owner_id"`
+        MediaId      MediaModelId `json:"media_id"`
+        Title        string       `json:"title"`
+        LikedKey     string       `json:"liked_key"`
+        SourceUrl    string       `json:"source_url"`
+        ReferenceUrl string       `json:"reference_url"`
+        UpdatedAt    time.Time    `json:"-"`
+    }
+    """
+    unique_id: str = ''
+    owner_id: int = 0
+    media_id: int = 0
+    title: str = ''
+    liked_key: str = ''
+    source_url: str = ''
+    reference_url: str = ''
+
+

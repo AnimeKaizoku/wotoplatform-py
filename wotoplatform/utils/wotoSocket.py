@@ -1,4 +1,5 @@
 import asyncio
+import ssl
 
 class WotoSocket:
     _host: str = ''
@@ -18,7 +19,15 @@ class WotoSocket:
         self._port = port
     
     async def connect(self) -> None:
-        r, w = await asyncio.open_connection(host=self._host, port=self._port)
+        ssl_ctx = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+        ssl_ctx.check_hostname = False
+        ssl_ctx.set_ciphers('ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384')
+        
+        r, w = await asyncio.open_connection(
+            host=self._host, 
+            port=self._port,
+            ssl=ssl_ctx,
+            ssl_handshake_timeout=900)
         self.__reader = r
         self.__writer = w
         self.is_initialized = True

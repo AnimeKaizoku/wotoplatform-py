@@ -2,6 +2,8 @@ import json
 import threading
 from typing import Union
 
+from wotoplatform.types.usersData import ResolveUsernameData
+
 from .utils import (
     WotoSocket,
 )
@@ -38,6 +40,7 @@ from .types import (
     GetUserInfoData, 
     GetUserInfoResult, 
     SetUserFavoriteData,
+    DeleteUserFavoriteData,
 )
 
 __version__ = '0.0.14'
@@ -310,6 +313,38 @@ class WotoClient(ClientBase):
         
         return response.result
 
+    async def delete_user_favorite(self, key: str, user_id: int = 0) -> bool:
+        if not isinstance(user_id, int):
+            raise InvalidTypeException(int, type(user_id))
+        
+        response = await self.send_and_parse(
+            DeleteUserFavoriteData(
+                user_id=user_id,
+                favorite_key=key,
+            ),
+        )
+
+        if not response.success:
+            raise response.get_exception()
+        
+        return response.result
+    
+    async def resolve_username(self, username: str) -> GetUserInfoResult:
+        if not isinstance(username, str):
+            raise InvalidTypeException(str, type(username))
+        
+
+        response = await self.send_and_parse(
+            ResolveUsernameData(
+                username=username,
+            ),
+        )
+
+        if not response.success:
+            raise response.get_exception()
+        
+        return response.result
+        
 
 
 
