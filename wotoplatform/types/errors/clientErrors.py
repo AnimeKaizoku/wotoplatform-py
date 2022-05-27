@@ -1,4 +1,5 @@
 
+import asyncio
 from .general import ClientException
 
 
@@ -31,3 +32,20 @@ class ClientVersionNotAcceptable(ClientException):
     """
     def __init__(self):
         self.message = f'Client version is not acceptable.'
+
+class DataReceiveTimeout(ClientException):
+    inner_exception: asyncio.TimeoutError = None
+    """
+    Client version is not acceptable.
+    """
+    def __init__(self, inner_exception: asyncio.TimeoutError = None):
+        self.message = f'Receiving data from server timed out.'
+        self.inner_exception = inner_exception
+
+class EmptyServerResponse(ClientException):
+    """
+    Client version is not acceptable.
+    """
+    def __init__(self):
+        self.message = f'Received empty data from server, most likely connection is closed.'
+

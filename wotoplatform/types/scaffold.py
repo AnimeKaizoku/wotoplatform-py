@@ -1,6 +1,7 @@
 import json
 import typing
 from pydantic import BaseModel
+from pydantic.config import Extra
 
 from wotoplatform.types.errors.general import EndpointError
 from .errors import ServerException
@@ -15,6 +16,12 @@ class Scaffold():
     def get_action(self) -> int:
         pass
 
+    def get_unique_id(self) -> str:
+        return getattr(self, 'data_unique_id', None)
+    
+    def set_unique_id(self, uid: str):
+        setattr(self, 'data_unique_id', uid)
+    
     def get_single_batch(self) -> str:
         pass
 
@@ -31,6 +38,7 @@ class DScaffold(Scaffold, BaseModel):
     """
     def get_as_bytes(self) -> bytes:
         final_value = {
+            'unique_id': self.get_unique_id(),
             'action': self.get_action(),
             'batch_execute': self.get_batch_execution(),
             'data': self.json(),
@@ -39,11 +47,12 @@ class DScaffold(Scaffold, BaseModel):
     
     def get_response_type(self) -> type:
         pass
+    
 
 
 class EmptyScaffoldData(DScaffold):
     """
-    EmptyScaffoldData descripes an empty `DScaffold`.
+    EmptyScaffoldData describes an empty `DScaffold`.
     """
     def is_empty_scaffold(self):
         return True

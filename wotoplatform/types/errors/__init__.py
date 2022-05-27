@@ -34,6 +34,8 @@ from .clientErrors import (
     ClientVersionNotAcceptable,
     ClientNotInitializedException,
     ClientAlreadyInitializedException,
+    DataReceiveTimeout,
+    EmptyServerResponse
 )
 
 from .parser import (
@@ -71,6 +73,8 @@ __all__ = [
     ClientVersionNotAcceptable,
     ClientNotInitializedException,
     ClientAlreadyInitializedException,
+    DataReceiveTimeout,
+    EmptyServerResponse,
     parse_server_error,
 ]
 

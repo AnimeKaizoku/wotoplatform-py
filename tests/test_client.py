@@ -17,12 +17,21 @@ async def test_woto_client01():
         the_config.host,
         the_config.port,
     )
-    await client.start()
-    print(await client.get_me())
+    
+    try:
+        await client.start()
+    except Exception:
+        await client.stop()
+        raise
+    me = await client.get_me()
+    print(me)
 
     try:
         assert await client.change_user_bio(__TEST_BIO_VALUE01__)
     except NotModified: pass
+    except Exception:
+        await client.stop()
+        raise
     
     me = await client.get_me()
     assert me.bio == __TEST_BIO_VALUE01__
@@ -33,6 +42,9 @@ async def test_woto_client01():
             last_name=__TEST_LAST_NAME_VALUE01__,
         )
     except NotModified: pass
+    except Exception:
+        await client.stop()
+        raise
 
     me = await client.get_me()
     assert me.first_name == __TEST_FIRST_NAME_VALUE01__
@@ -59,5 +71,4 @@ async def test_woto_client01():
     fav02 = await client.get_user_favorite('light novel')
 
     assert fav02.favorite_value == 'Mushoku Tensei'
-    
 

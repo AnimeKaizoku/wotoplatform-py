@@ -1,13 +1,16 @@
+import asyncio
 import json
 import threading
-from typing import Union
-
+from typing import Callable, Union
+import trio
+import uuid
 from wotoplatform.types.usersData import ResolveUsernameData
 
 from .utils import (
     WotoSocket,
 )
 from .tools import (
+    DataReceiver,
     make_sure_byte, 
 )
 from .types.errors import (
@@ -54,12 +57,15 @@ class WotoClient(ClientBase):
     is_initialized: bool = False
     is_logged_in: bool = False
     client_version: VersionData = None
+    connection_closed_handler: Callable = None
     __endpoint: str = ''
     __port: int = 0
     __woto_socket: WotoSocket = None
-    __MAX_DATA_COUNTER = 8
-
-    client_lock = threading.Lock()
+    __MAX_DATA_BUFFER = 8
+    __internal_receiver = {}
+    __read_data_thread: threading.Thread = None
+    __internal_loop = None
+    
 
     def __init__(
         self, 
@@ -86,9 +92,18 @@ class WotoClient(ClientBase):
         
         if not self.__woto_socket:
             self.__woto_socket = WotoSocket(host=self.__endpoint, port=self.__port)
+            # await self.__woto_socket.conn_lock.acquire()
         
         if not self.__woto_socket.is_initialized:
-            await self.__woto_socket.connect()
+            self.__internal_loop = asyncio.new_event_loop()
+            # await self.__woto_socket.connect(self.__internal_loop)
+            # await self.__woto_socket.connect(None)
+        
+        self.__read_data_thread = threading.Thread(target=self.__read_data_init)
+        self.__read_data_thread.start()
+        # self.__read_data_init()
+        # self.__internal_loop.run_until_complete(self.__read_data_loop())
+        # await asyncio.gather(self.__read_data_loop())
         
         self.client_version = VersionData()
         self.is_initialized = True
@@ -102,7 +117,7 @@ class WotoClient(ClientBase):
             
             if not version_response.result.is_acceptable:
                 raise ClientVersionNotAcceptable()
-        
+            
             try:
                 await self._login(
                     username=self.username,
@@ -117,7 +132,6 @@ class WotoClient(ClientBase):
                 )
             
             self.is_logged_in = True
-            
         except:
             self.is_initialized = False
             raise
@@ -174,26 +188,61 @@ class WotoClient(ClientBase):
 
         return response.result
 
+    def __read_data_init(self) -> None:
+        # loop = asyncio.get_event_loop()
+        self.__internal_loop.run_until_complete(self.__read_data_loop())
+        # self.__internal_loop.run_in_executor(self.__read_data_loop())
+        pass
+    
+    async def __read_data_loop(self) -> None:
+        await self.__woto_socket.connect(self.__internal_loop)
+        while self.is_initialized:
+            data = await self._read_data()
+            if not data:
+                continue
+            j_value = json.loads(data)
+            j_uid = str(j_value['unique_id'])
+            data_receiver = self.__internal_receiver.get(j_uid, None)
+            if not isinstance(data_receiver, DataReceiver):
+                #TODO: call handlers....
+                continue
+            
+            data_receiver.receive_data(j_value)
+            self.__internal_receiver.pop(j_uid, None)
+            
+
     async def _write_data(self, data: bytes):
-        bb = str(len(data)).zfill(self.__MAX_DATA_COUNTER)
-        bb = make_sure_byte(bb, self.__MAX_DATA_COUNTER)
+        bb = str(len(data)).zfill(self.__MAX_DATA_BUFFER)
+        bb = make_sure_byte(bb, self.__MAX_DATA_BUFFER)
         await self.__woto_socket.send(bb + data)
     
     async def _read_data(self) -> bytes:
-        count = await self.__woto_socket.recv(self.__MAX_DATA_COUNTER)
+        count = await self.__woto_socket.recv(self.__MAX_DATA_BUFFER)
+        if not count:
+            if not self.is_initialized or not self.connection_closed_handler:
+                return #TODO: logging
+            self.connection_closed_handler()
+            return
         count = int(count.decode('utf-8').strip())
         return await self.__woto_socket.recv(count)
     
-    async def send(self, scaffold: Scaffold) -> bytes:
+    async def send(self, scaffold: Scaffold, timeout: float = 1):
         if not self.is_initialized:
             raise ClientNotInitializedException()
         
         if not isinstance(scaffold, Scaffold):
             raise InvalidTypeException(Scaffold, type(scaffold))
 
-        with self.client_lock:
-            await self._write_data(scaffold.get_as_bytes())
-            return await self._read_data()
+        uid = str(uuid.uuid4())
+        scaffold.set_unique_id(uid)
+        d_receiver = DataReceiver(self.__woto_socket)
+        self.__internal_receiver[uid] = d_receiver
+        # await self.client_lock.acquire()
+        await self._write_data(scaffold.get_as_bytes())
+        await d_receiver.wait_for_data(timeout)
+        r_value = d_receiver.received_data
+        # self.client_lock.release()
+        return r_value
     
     async def send_and_parse(self, scaffold: DScaffold) -> RScaffold:
         if not isinstance(scaffold, DScaffold):
@@ -203,7 +252,9 @@ class WotoClient(ClientBase):
         if not response_type:
             return None
         
-        return response_type(**json.loads(await self.send(scaffold)))
+        j_value = await self.send(scaffold)
+        res = response_type(**j_value)
+        return res
 
     async def get_me(self) -> GetMeResult:
         response = await self.send_and_parse(GetMeData())
