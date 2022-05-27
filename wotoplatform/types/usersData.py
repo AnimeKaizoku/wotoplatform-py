@@ -107,6 +107,7 @@ class LoginUserResponse(RScaffold):
 
 
 class GetMeData(EmptyScaffoldData):
+    data_unique_id: str = ''
     def get_action(self) -> int:
         return __ACTION_USER__
     

@@ -71,4 +71,6 @@ async def test_woto_client01():
     fav02 = await client.get_user_favorite('light novel')
 
     assert fav02.favorite_value == 'Mushoku Tensei'
+    
+    await client.stop()
 
