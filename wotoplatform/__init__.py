@@ -64,6 +64,7 @@ class WotoClient(ClientBase):
     __MAX_DATA_BUFFER = 8
     __internal_receiver = {}
     __read_data_thread: threading.Thread = None
+    __read_task: asyncio.Task = None
     __internal_loop = None
     
 
@@ -86,6 +87,12 @@ class WotoClient(ClientBase):
 
         self.__woto_socket = WotoSocket(host=endpoint, port=port)
     
+    def __del__(self) -> None:
+        if self.__read_task and not self.__read_task.done():
+            try:
+                self.__read_task.cancel()
+            except Exception: pass
+        
     async def start(self) -> None:
         if self.is_initialized:
             raise ClientAlreadyInitializedException()
@@ -94,16 +101,22 @@ class WotoClient(ClientBase):
             self.__woto_socket = WotoSocket(host=self.__endpoint, port=self.__port)
             # await self.__woto_socket.conn_lock.acquire()
         
-        if not self.__woto_socket.is_initialized:
-            self.__internal_loop = asyncio.new_event_loop()
+        # if not self.__woto_socket.is_initialized:
+            # self.__internal_loop = asyncio.new_event_loop()
             # await self.__woto_socket.connect(self.__internal_loop)
             # await self.__woto_socket.connect(None)
         
-        self.__read_data_thread = threading.Thread(target=self.__read_data_init)
-        self.__read_data_thread.start()
+        # self.__read_data_thread = threading.Thread(target=self.__read_data_init)
+        # self.__read_data_thread.start()
+        if self.__read_task and not self.__read_task.done():
+            try:
+                self.__read_task.cancel()
+            except Exception: pass
+        
         # self.__read_data_init()
         # self.__internal_loop.run_until_complete(self.__read_data_loop())
         # await asyncio.gather(self.__read_data_loop())
+        self.__read_task = asyncio.create_task(self.__read_data_loop())
         
         self.client_version = VersionData()
         self.is_initialized = True
@@ -137,16 +150,18 @@ class WotoClient(ClientBase):
             raise
     
     async def stop(self) -> None:
-        if self.is_initialized:
-            self.is_initialized = False
-        
-        if self.is_logged_in:
-            self.is_logged_in = False
-        
+        self.is_initialized = False
+        self.is_logged_in = False
         if self.__woto_socket:
             await self.__woto_socket.close()
+            self.__woto_socket = None
         
-        self.__woto_socket = None
+        if self.__read_task and not self.__read_task.done():
+            try: self.__read_task.cancel()
+            except Exception: pass
+            try: await self.__read_task
+            except asyncio.CancelledError: pass
+        
         
     
     async def _login(self, username: str, password: str, auth_key:str, access_hash: str) -> LoginUserResult:
@@ -190,7 +205,7 @@ class WotoClient(ClientBase):
 
     def __read_data_init(self) -> None:
         # loop = asyncio.get_event_loop()
-        self.__internal_loop.run_until_complete(self.__read_data_loop())
+        # self.__internal_loop.run_until_complete(self.__read_data_loop())
         # self.__internal_loop.run_in_executor(self.__read_data_loop())
         pass
     
@@ -238,6 +253,7 @@ class WotoClient(ClientBase):
         d_receiver = DataReceiver(self.__woto_socket)
         self.__internal_receiver[uid] = d_receiver
         # await self.client_lock.acquire()
+        await d_receiver.first_wait()
         await self._write_data(scaffold.get_as_bytes())
         await d_receiver.wait_for_data(timeout)
         r_value = d_receiver.received_data
