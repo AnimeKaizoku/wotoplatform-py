@@ -2,7 +2,6 @@ import asyncio
 import json
 import threading
 from typing import Callable, Union
-import trio
 import uuid
 from wotoplatform.types.usersData import ResolveUsernameData
 
@@ -46,7 +45,7 @@ from .types import (
     DeleteUserFavoriteData,
 )
 
-__version__ = '0.0.14'
+__version__ = '0.0.15'
 
 class WotoClient(ClientBase):
     username: str = ''
