@@ -27,7 +27,6 @@ __BATCH_DELETE_USER_FAVORITE__      = 'delete_user_favorite'
 __ACTION_USER__ = 2
 
 class RegisterUserData(DScaffold):
-    data_unique_id: str = ''
     user_id: int = 0
     private_hash: str = ''
     username: str = ''
@@ -70,7 +69,6 @@ class RegisterUserResponse(RScaffold):
 
 
 class LoginUserData(DScaffold):
-    data_unique_id: str = ''
     username: str = ''
     password: str = ''
     auth_key: str = ''
@@ -107,7 +105,6 @@ class LoginUserResponse(RScaffold):
 
 
 class GetMeData(EmptyScaffoldData):
-    data_unique_id: str = ''
     def get_action(self) -> int:
         return __ACTION_USER__
     
@@ -139,7 +136,6 @@ class GetMeResponse(RScaffold):
 
 
 class ChangeUserBioData(DScaffold):
-    data_unique_id: str = ''
     user_id: int = 0
     bio: str = ''
 
@@ -157,7 +153,6 @@ class ChangeUserBioResponse(RScaffold):
 
 
 class ChangeNamesData(DScaffold):
-    data_unique_id: str = ''
     user_id: int = 0
     first_name: str = ''
     last_name: str = ''
@@ -176,7 +171,6 @@ class ChangeUserBioResponse(RScaffold):
 
 
 class GetUserInfoData(DScaffold):
-    data_unique_id: str = ''
     user_id: int = 0
     username: str = ''
 
@@ -225,7 +219,6 @@ class GetUserInfoResponse(RScaffold):
 
 
 class ResolveUsernameData(DScaffold):
-    data_unique_id: str = ''
     username: str = ''
     password: str = ''
     auth_key: str = ''
@@ -249,7 +242,6 @@ class ResolveUsernameResponse(RScaffold):
 
 
 class GetUserFavoriteData(DScaffold):
-    data_unique_id: str = ''
     user_id: int = 0
     favorite_key: str = ''
 
@@ -272,7 +264,6 @@ class GetUserFavoriteResponse(RScaffold):
 
 
 class GetUserFavoriteCountData(DScaffold):
-    data_unique_id: str = ''
     user_id: int = 0
 
     def get_action(self) -> int:
@@ -292,7 +283,6 @@ class GetUserFavoriteCountResponse(RScaffold):
     result: Optional[GetUserFavoriteCountResult]
 
 class SetUserFavoriteData(DScaffold):
-    data_unique_id: str = ''
     user_id: int = 0
     favorite_key: str = ''
     favorite_value: str = ''
@@ -311,7 +301,6 @@ class SetUserFavoriteResponse(RScaffold):
     result: Optional[bool]
 
 class DeleteUserFavoriteData(DScaffold):
-    data_unique_id: str = ''
     user_id: int = 0
     favorite_key: str = ''
 
@@ -328,7 +317,6 @@ class DeleteUserFavoriteResponse(RScaffold):
     result: Optional[bool]
 
 class ResolveUsernameData(DScaffold):
-    data_unique_id: str = ''
     username: str = ''
 
     def get_action(self) -> int:
@@ -345,7 +333,6 @@ class ResolveUsernameResponse(RScaffold):
 
 
 class LikedItem(DScaffold):
-    data_unique_id: str = ''
     """
     type LikedListElement struct {
         UniqueId     string       `json:"unique_id" gorm:"primaryKey"`

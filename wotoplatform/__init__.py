@@ -20,6 +20,7 @@ from .types.errors import (
     ClientAlreadyInitializedException,
 )
 from .types import (
+    ScaffoldHolder,
     ClientBase,
     DScaffold,
     RScaffold,
@@ -98,23 +99,12 @@ class WotoClient(ClientBase):
         
         if not self.__woto_socket:
             self.__woto_socket = WotoSocket(host=self.__endpoint, port=self.__port)
-            # await self.__woto_socket.conn_lock.acquire()
         
-        # if not self.__woto_socket.is_initialized:
-            # self.__internal_loop = asyncio.new_event_loop()
-            # await self.__woto_socket.connect(self.__internal_loop)
-            # await self.__woto_socket.connect(None)
-        
-        # self.__read_data_thread = threading.Thread(target=self.__read_data_init)
-        # self.__read_data_thread.start()
         if self.__read_task and not self.__read_task.done():
             try:
                 self.__read_task.cancel()
             except Exception: pass
         
-        # self.__read_data_init()
-        # self.__internal_loop.run_until_complete(self.__read_data_loop())
-        # await asyncio.gather(self.__read_data_loop())
         self.__read_task = asyncio.create_task(self.__read_data_loop())
         
         self.client_version = VersionData()
@@ -201,12 +191,6 @@ class WotoClient(ClientBase):
         
 
         return response.result
-
-    def __read_data_init(self) -> None:
-        # loop = asyncio.get_event_loop()
-        # self.__internal_loop.run_until_complete(self.__read_data_loop())
-        # self.__internal_loop.run_in_executor(self.__read_data_loop())
-        pass
     
     async def __read_data_loop(self) -> None:
         await self.__woto_socket.connect(self.__internal_loop)
@@ -248,12 +232,12 @@ class WotoClient(ClientBase):
             raise InvalidTypeException(Scaffold, type(scaffold))
 
         uid = str(uuid.uuid4())
-        scaffold.set_unique_id(uid)
+        holder = ScaffoldHolder(uid, scaffold)
         d_receiver = DataReceiver(self.__woto_socket)
         self.__internal_receiver[uid] = d_receiver
         # await self.client_lock.acquire()
         await d_receiver.first_wait()
-        await self._write_data(scaffold.get_as_bytes())
+        await self._write_data(holder.get_as_bytes())
         await d_receiver.wait_for_data(timeout)
         r_value = d_receiver.received_data
         # self.client_lock.release()

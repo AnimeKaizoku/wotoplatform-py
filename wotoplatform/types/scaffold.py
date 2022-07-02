@@ -10,17 +10,8 @@ from .errors import parse_server_error
 __BATCH_STR__ = 'batch?='
 
 class Scaffold():
-    def get_as_bytes(self) -> bytes:
-        pass
-
     def get_action(self) -> int:
         pass
-
-    def get_unique_id(self) -> str:
-        return getattr(self, 'data_unique_id', None)
-    
-    def set_unique_id(self, uid: str):
-        setattr(self, 'data_unique_id', uid)
     
     def get_single_batch(self) -> str:
         pass
@@ -32,18 +23,33 @@ class Scaffold():
         return False
 
 
+class ScaffoldHolder():
+    _data_unique_id: str = ''
+    scaffold_data: Scaffold = None
+    def get_unique_id(self) -> str:
+        return self._data_unique_id
+    
+    def set_unique_id(self, uid: str):
+        self._data_unique_id = uid
+    
+    def __init__(self, unique_id: str, the_data: Scaffold) -> None:
+        self._data_unique_id = unique_id
+        self.scaffold_data = the_data
+    
+    def get_as_bytes(self) -> bytes:
+        final_value = {
+            'unique_id': self.get_unique_id(),
+            'action': self.scaffold_data.get_action(),
+            'batch_execute': self.scaffold_data.get_batch_execution(),
+            'data': self.scaffold_data.json(),
+        }
+        return json.dumps(final_value).encode('utf-8')
+
 class DScaffold(Scaffold, BaseModel):
     """
     DScaffold is a base class for all data classes that need to be sent to the server.
     """
-    def get_as_bytes(self) -> bytes:
-        final_value = {
-            'unique_id': self.get_unique_id(),
-            'action': self.get_action(),
-            'batch_execute': self.get_batch_execution(),
-            'data': self.json(),
-        }
-        return json.dumps(final_value).encode('utf-8')
+    pass
     
     def get_response_type(self) -> type:
         pass

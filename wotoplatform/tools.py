@@ -1,8 +1,8 @@
 
 import asyncio
 from .types.errors import (
-    DataReceiveTimeout,
     EmptyServerResponse,
+    DataReceiveTimeout,
 )
 
 
@@ -29,14 +29,13 @@ class DataReceiver:
         self._data_waiter = asyncio.Lock()
         self.base_client = base_client
     
-    async def wait_for_data(self, timeout: float = 60) -> bytes:
-        # x = await asyncio.gather(self._wait_for_data())
-        # try:
-            # await asyncio.wait_for(x, timeout=timeout)
-        # except asyncio.TimeoutError as e:
-            # raise DataReceiveTimeout(e)
+    async def wait_for_data(self, timeout: float = 20) -> bytes:
+        try:
+            await asyncio.wait_for(self._wait_for_data(), timeout=timeout)
+        except asyncio.TimeoutError as e:
+            raise DataReceiveTimeout(e)
         
-        await self._wait_for_data()
+        # await self._wait_for_data()
         
         if self.received_data == None:
             raise EmptyServerResponse()
