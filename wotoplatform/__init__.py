@@ -243,6 +243,11 @@ class WotoClient(ClientBase):
         # self.client_lock.release()
         return r_value
     
+    async def send_raw_batch(self, action: int, batch_name: str, data):
+        if not isinstance(data, str):
+            data = json.dumps(data)
+        
+
     async def send_and_parse(self, scaffold: DScaffold) -> RScaffold:
         if not isinstance(scaffold, DScaffold):
             return None
