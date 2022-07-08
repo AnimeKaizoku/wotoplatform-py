@@ -3,6 +3,7 @@ from wotoplatform import WotoClient
 from wotoplatform.types.errors import (
     NotModified
 )
+from wotoplatform.types import RawResponse
 from .myconfig import the_config
 
 __TEST_BIO_VALUE01__ = 'This is my test bio'
@@ -63,6 +64,15 @@ async def test_woto_client01():
     fav01 = await client.get_user_favorite('anime')
 
     assert fav01.favorite_value == 'One Piece'
+    
+    from wotoplatform.types.usersData import (__ACTION_USER__, __BATCH_GET_USER_FAVORITE__)
+    fav01_raw_data = {
+        'user_id' : 0,
+        'favorite_key': 'anime'
+    }
+    fav01_raw_resp = await client.send_raw_batch(__ACTION_USER__, __BATCH_GET_USER_FAVORITE__, fav01_raw_data)
+    
+    assert isinstance(fav01_raw_resp, RawResponse)
 
     try:
         await client.set_user_favorite('light-novel', 'Mushoku Tensei')
@@ -74,3 +84,30 @@ async def test_woto_client01():
     
     await client.stop()
 
+
+@pytest.mark.asyncio
+async def test_raw_batch_execution():
+    client = WotoClient(
+        the_config.username, 
+        the_config.password, 
+        the_config.host,
+        the_config.port,
+    )
+    
+    try:
+        await client.start()
+    except Exception:
+        await client.stop()
+        raise
+    
+    from wotoplatform.types.usersData import (__ACTION_USER__, __BATCH_GET_USER_FAVORITE__)
+    fav01_raw_data = {
+        'user_id' : 0,
+        'favorite_key': 'anime'
+    }
+    fav01_raw_resp = await client.send_raw_batch(__ACTION_USER__, __BATCH_GET_USER_FAVORITE__, fav01_raw_data)
+    
+    assert isinstance(fav01_raw_resp, RawResponse) 
+    
+    
+    await client.stop()

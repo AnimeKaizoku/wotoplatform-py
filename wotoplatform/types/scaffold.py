@@ -24,6 +24,9 @@ class Scaffold():
 
 
 class ScaffoldHolder():
+    """
+    ScaffoldHolder is a simple scaffold container which has unique-id.
+    """
     _data_unique_id: str = ''
     scaffold_data: Scaffold = None
     def get_unique_id(self) -> str:
@@ -77,7 +80,7 @@ class ResultScaffold(BaseModel):
 
 class RScaffold(Scaffold, BaseModel):
     """
-    RSScaffold is a base class for all data classes that need to be received 
+    RScaffold is a base class for all data classes that need to be received 
         from the server as the response.
     """
     success: bool
@@ -96,3 +99,48 @@ class RScaffold(Scaffold, BaseModel):
         if self.has_exception():
             return parse_server_error(self.error)
         return None
+
+
+
+class RawResponse(RScaffold):
+    """
+    A raw server response.
+    """
+    result: typing.Optional[typing.Union[dict, list]]
+
+
+class RawDScaffold(Scaffold):
+    """
+    RawDScaffold is a Scaffold which contains raw data in itself, instead of having
+    attributes like normal Scaffold classes.
+    """
+    __scaffold_action: int = 0
+    __scaffold_single_batch: str = ''
+    __scaffold_json_data: str = ''
+    
+    def __init__(self, action: int, the_batch: str, data: str) -> None:
+        self.__scaffold_action = action
+        self.__scaffold_single_batch = the_batch
+        self.__scaffold_json_data = data
+    
+    def get_action(self) -> int:
+        return self.__scaffold_action
+    
+    def get_single_batch(self) -> str:
+        return self.__scaffold_single_batch
+    
+    def json(self) -> str:
+        return self.__scaffold_json_data
+    
+    def parse_response(self, j_value):
+        if j_value is dict:
+            my_result = j_value['result']
+            j_value['result'] = None
+            raw_resp = RawResponse(**j_value)
+            raw_resp.result = my_result
+            return raw_resp
+        return RawResponse(**j_value)
+
+    def get_response_type(self) -> type:
+        return RawResponse
+

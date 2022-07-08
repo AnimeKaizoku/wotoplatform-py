@@ -1,10 +1,9 @@
 import asyncio
 import json
-import threading
+import inspect
+import logging
 from typing import Callable, Union
 import uuid
-from wotoplatform.types.usersData import ResolveUsernameData
-
 from .utils import (
     WotoSocket,
 )
@@ -20,6 +19,8 @@ from .types.errors import (
     ClientAlreadyInitializedException,
 )
 from .types import (
+    RawResponse,
+    RawDScaffold,
     ScaffoldHolder,
     ClientBase,
     DScaffold,
@@ -44,9 +45,11 @@ from .types import (
     GetUserInfoResult, 
     SetUserFavoriteData,
     DeleteUserFavoriteData,
+    ResolveUsernameData,
 )
 
 __version__ = '0.0.15'
+log = logging.getLogger(__name__)
 
 class WotoClient(ClientBase):
     username: str = ''
@@ -65,6 +68,7 @@ class WotoClient(ClientBase):
     __internal_receiver = {}
     __read_task: asyncio.Task = None
     __internal_loop = None
+    __read_data_error: Exception = None
     
 
     def __init__(
@@ -191,10 +195,21 @@ class WotoClient(ClientBase):
 
         return response.result
     
+    def get_read_data_error(self) -> Exception:
+        return self.__read_data_error
+    
     async def __read_data_loop(self) -> None:
         await self.__woto_socket.connect(self.__internal_loop)
+        data = None
         while self.is_initialized:
-            data = await self._read_data()
+            try:
+                data = await self._read_data()
+            except Exception as e:
+                log.error(e, exc_info=True)
+                self.__read_data_error = e
+                data = None
+                continue
+            
             if not data:
                 continue
             j_value = json.loads(data)
@@ -242,20 +257,26 @@ class WotoClient(ClientBase):
         # self.client_lock.release()
         return r_value
     
-    async def send_raw_batch(self, action: int, batch_name: str, data):
+    async def send_raw_batch(self, action: int, batch_name: str, data) -> RawResponse:
         if not isinstance(data, str):
             data = json.dumps(data)
         
+        raw_scaffold = RawDScaffold(action, batch_name, data)
+        return await self.send_and_parse(raw_scaffold)
 
     async def send_and_parse(self, scaffold: DScaffold) -> RScaffold:
-        if not isinstance(scaffold, DScaffold):
+        if not isinstance(scaffold, DScaffold) and not isinstance(scaffold, RawDScaffold):
             return None
         
         response_type = scaffold.get_response_type()
-        if not response_type:
+        parser_method = getattr(scaffold, 'parse_response', None)
+        if not response_type and not parser_method:
             return None
         
         j_value = await self.send(scaffold)
+        if parser_method and inspect.ismethod(parser_method):
+            return parser_method(j_value)
+        
         res = response_type(**j_value)
         return res
 

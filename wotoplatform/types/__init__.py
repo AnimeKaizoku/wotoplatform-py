@@ -5,6 +5,9 @@ from .clientBase import *
 from .permissions import  *
 
 __all__ = [
+    RawResponse,
+    RawDScaffold,
+    ScaffoldHolder,
     Scaffold,
     DScaffold,
     EmptyScaffoldData,
@@ -31,4 +34,7 @@ __all__ = [
     GetUserFavoriteCountResult,
     SetUserFavoriteData,
     SetUserFavoriteResponse,
+    ResolveUsernameData,
+    ResolveUsernameResponse,
+    ResolveUsernameResult,
 ]
