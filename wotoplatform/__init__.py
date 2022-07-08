@@ -72,7 +72,7 @@ class WotoClient(ClientBase):
         self, 
         username: str, 
         password: str, 
-        endpoint: str = 'wotoplatform.hakai.animekaizoku.com', 
+        endpoint: str = 'wotoplatform.kaizoku.cyou', 
         port: int = 50100,
     ):
         if not username:
