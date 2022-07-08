@@ -107,7 +107,17 @@ async def test_raw_batch_execution():
     }
     fav01_raw_resp = await client.send_raw_batch(__ACTION_USER__, __BATCH_GET_USER_FAVORITE__, fav01_raw_data)
     
-    assert isinstance(fav01_raw_resp, RawResponse) 
+    assert isinstance(fav01_raw_resp, RawResponse)
+    
+    try:
+        from wotoplatform.types.groupsData import (__ACTION_GROUPS__, __BATCH_GET_GROUP_INFO_BY_ID__)
+        group_id_data = {
+            'group_id': 'GR-125412'
+        }
+        group_info_raw_resp = await client.send_raw_batch(__ACTION_GROUPS__, __BATCH_GET_GROUP_INFO_BY_ID__, group_id_data)
+        assert isinstance(group_info_raw_resp, RawResponse)
+    except Exception as e:
+        print(e) 
     
     
     await client.stop()

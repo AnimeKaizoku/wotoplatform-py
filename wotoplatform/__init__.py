@@ -238,7 +238,7 @@ class WotoClient(ClientBase):
         count = int(count.decode('utf-8').strip())
         return await self.__woto_socket.recv(count)
     
-    async def send(self, scaffold: Scaffold, timeout: float = 1):
+    async def send(self, scaffold: Scaffold, timeout: float = 3):
         if not self.is_initialized:
             raise ClientNotInitializedException()
         
@@ -257,14 +257,14 @@ class WotoClient(ClientBase):
         # self.client_lock.release()
         return r_value
     
-    async def send_raw_batch(self, action: int, batch_name: str, data) -> RawResponse:
+    async def send_raw_batch(self, action: int, batch_name: str, data, timeout: float = 3) -> RawResponse:
         if not isinstance(data, str):
             data = json.dumps(data)
         
         raw_scaffold = RawDScaffold(action, batch_name, data)
-        return await self.send_and_parse(raw_scaffold)
+        return await self.send_and_parse(raw_scaffold, timeout=timeout)
 
-    async def send_and_parse(self, scaffold: DScaffold) -> RScaffold:
+    async def send_and_parse(self, scaffold: DScaffold, timeout: float = 3) -> RScaffold:
         if not isinstance(scaffold, DScaffold) and not isinstance(scaffold, RawDScaffold):
             return None
         
@@ -273,7 +273,7 @@ class WotoClient(ClientBase):
         if not response_type and not parser_method:
             return None
         
-        j_value = await self.send(scaffold)
+        j_value = await self.send(scaffold, timeout=timeout)
         if parser_method and inspect.ismethod(parser_method):
             return parser_method(j_value)
         
