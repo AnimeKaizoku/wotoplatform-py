@@ -63,7 +63,6 @@ class WotoClient(ClientBase):
     __woto_socket: WotoSocket = None
     __MAX_DATA_BUFFER = 8
     __internal_receiver = {}
-    __read_data_thread: threading.Thread = None
     __read_task: asyncio.Task = None
     __internal_loop = None
     
