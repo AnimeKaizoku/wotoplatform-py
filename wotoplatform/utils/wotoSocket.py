@@ -2,6 +2,7 @@ import asyncio
 import ssl
 import sys
 import socket
+import time
 
 try:
     import socks
@@ -125,7 +126,18 @@ class WotoSocket:
     
     async def close(self) -> None:
         try:
-            await self.__writer.close()
+            try:
+                self.__writer.close()
+            except AttributeError:
+                try:
+                    self.socket.shutdown(socket.SHUT_RDWR)
+                except OSError:
+                    pass
+                finally:
+                    # A tiny sleep placed here helps avoiding .recv(n) hanging until the timeout.
+                    # This is a workaround that seems to fix the occasional delayed stop of a client.
+                    time.sleep(0.001)
+                    self.socket.close()
             self.__reader = None
             self.__writer = None
             self.is_closed = True
