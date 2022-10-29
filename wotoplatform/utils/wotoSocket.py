@@ -108,9 +108,6 @@ class WotoSocket:
         writer = asyncio.StreamWriter(transport, protocol, reader, loop)
         return reader, writer
 
-
-
-
     async def send(self, data: bytes) -> None:
         while not self.__writer and not self.is_initialized:
             await asyncio.sleep(0.1)
