@@ -1,16 +1,40 @@
 import asyncio
 import ssl
+import sys
+import socket
+
+try:
+    import socks
+except ImportError as e:
+    e.msg = (
+        "PySocks is missing and wotoplatform can't run without. "
+        "Please install it using \"pip3 install pysocks\"."
+    )
+
+    raise e
+
 
 class WotoSocket:
+    TIMEOUT = 10
+    
     _host: str = ''
     _port: int = 0
+    _use_tls: bool = True
+    _ipv6: bool = False
+    _socket: socks.socksocket = None
     __reader: asyncio.StreamReader = None
     __writer: asyncio.StreamWriter = None
     conn_lock = asyncio.Lock()
     is_initialized: bool = False
     is_closed: bool = False
 
-    def __init__(self, host: str, port:int) -> None:
+    def __init__(
+        self, 
+        host: str, 
+        port:int, 
+        use_tls: bool, 
+        ipv6: bool
+    ) -> None:
         if not host:
             raise Exception('host is required')
         
@@ -19,19 +43,36 @@ class WotoSocket:
         
         self._host = host
         self._port = port
+        self._use_tls = use_tls
+        self._ipv6 = ipv6
+        self.socket = socks.socksocket(
+            socket.AF_INET6 if ipv6
+            else socket.AF_INET
+        )
+        self.socket.settimeout(WotoSocket.TIMEOUT)
     
-    async def connect(self, loop = None) -> None:
-        ssl_ctx = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
-        ssl_ctx.check_hostname = False
-        ssl_ctx.set_ciphers('ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384')
+    async def connect(self, address: tuple = None):
+        if address == None:
+            address = (self._host, self._port)
+        self.socket.connect(address)
+        self.__reader, self.__writer = await asyncio.open_connection(sock=self.socket)
     
+    async def connect_OLD(self, loop = None) -> None:
+        if sys.platform == 'win32':
+            asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+        ssl_ctx = None
+        if self._use_tls:    
+            ssl_ctx = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+            ssl_ctx.check_hostname = False
+            ssl_ctx.set_ciphers('ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384')
+
         r, w = await self.open_connection(
             host=self._host, 
             port=self._port,
             loop=loop,
             ssl=ssl_ctx,
-            ssl_handshake_timeout=900)
-        
+            ssl_handshake_timeout=9
+        )
         self.__reader = r
         self.__writer = w
         self.is_initialized = True

@@ -48,7 +48,7 @@ from .types import (
     ResolveUsernameData,
 )
 
-__version__ = '0.0.15'
+__version__ = '0.0.16'
 log = logging.getLogger(__name__)
 
 class WotoClient(ClientBase):
@@ -61,6 +61,7 @@ class WotoClient(ClientBase):
     is_logged_in: bool = False
     client_version: VersionData = None
     connection_closed_handler: Callable = None
+    use_tls: bool = True
     __endpoint: str = ''
     __port: int = 0
     __woto_socket: WotoSocket = None
@@ -77,6 +78,7 @@ class WotoClient(ClientBase):
         password: str, 
         endpoint: str = 'wotoplatform.kaizoku.cyou', 
         port: int = 50100,
+        use_tls: bool = True
     ):
         if not username:
             raise ValueError('username cannot be empty')
@@ -88,7 +90,12 @@ class WotoClient(ClientBase):
         self.__endpoint = endpoint
         self.__port = port
 
-        self.__woto_socket = WotoSocket(host=endpoint, port=port)
+        self.__woto_socket = WotoSocket(
+            host=endpoint, 
+            port=port,
+            use_tls=use_tls,
+            ipv6=False
+        )
     
     def __del__(self) -> None:
         if self.__read_task and not self.__read_task.done():
@@ -199,7 +206,8 @@ class WotoClient(ClientBase):
         return self.__read_data_error
     
     async def __read_data_loop(self) -> None:
-        await self.__woto_socket.connect(self.__internal_loop)
+        #await self.__woto_socket.connect_OLD(self.__internal_loop)
+        await self.__woto_socket.connect()
         data = None
         while self.is_initialized:
             try:
@@ -264,7 +272,7 @@ class WotoClient(ClientBase):
         raw_scaffold = RawDScaffold(action, batch_name, data)
         return await self.send_and_parse(raw_scaffold, timeout=timeout)
 
-    async def send_and_parse(self, scaffold: DScaffold, timeout: float = 3) -> RScaffold:
+    async def send_and_parse(self, scaffold: DScaffold, timeout: float = 10) -> RScaffold:
         if not isinstance(scaffold, DScaffold) and not isinstance(scaffold, RawDScaffold):
             return None
         

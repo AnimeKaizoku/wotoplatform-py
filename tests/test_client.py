@@ -15,8 +15,9 @@ async def test_woto_client01():
     client = WotoClient(
         the_config.username, 
         the_config.password, 
-        the_config.host,
-        the_config.port,
+        endpoint=the_config.host,
+        port=the_config.port,
+        use_tls=False,
     )
     
     try:
