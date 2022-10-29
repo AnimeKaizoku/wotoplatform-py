@@ -16,11 +16,4 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from . import Scaffold
-
-class ClientBase:
-    async def send(self, _: Scaffold) -> bytes:
-        pass
-
-    async def send_raw_batch(self, action: int, batch_name: str, data):
-        pass
+from .common import *

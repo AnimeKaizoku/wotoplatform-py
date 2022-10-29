@@ -1,3 +1,21 @@
+#  WotoPlatform-Py - A Python library for interacting with WotoPlatform API.
+#  Copyright (C) 2021-2022  ALiwoto - <woto@kaizoku.cyou> <https://github.com/ALiwoto>
+#
+#  This file is part of WotoPlatform-Py.
+#  
+#  This program is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+#  
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+# 
+#  You should have received a copy of the GNU General Public License
+#  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import pytest
 from wotoplatform import WotoClient
 from wotoplatform.types.errors import (
@@ -66,7 +84,7 @@ async def test_woto_client01():
 
     assert fav01.favorite_value == 'One Piece'
     
-    from wotoplatform.types.usersData import (__ACTION_USER__, __BATCH_GET_USER_FAVORITE__)
+    from wotoplatform.types.data_types.users_data import (__ACTION_USER__, __BATCH_GET_USER_FAVORITE__)
     fav01_raw_data = {
         'user_id' : 0,
         'favorite_key': 'anime'
@@ -101,7 +119,7 @@ async def test_raw_batch_execution():
         await client.stop()
         raise
     
-    from wotoplatform.types.usersData import (__ACTION_USER__, __BATCH_GET_USER_FAVORITE__)
+    from ..wotoplatform.types.data_types.users_data import (__ACTION_USER__, __BATCH_GET_USER_FAVORITE__)
     fav01_raw_data = {
         'user_id' : 0,
         'favorite_key': 'anime'
@@ -111,7 +129,7 @@ async def test_raw_batch_execution():
     assert isinstance(fav01_raw_resp, RawResponse)
     
     try:
-        from wotoplatform.types.groupsData import (__ACTION_GROUPS__, __BATCH_GET_GROUP_INFO_BY_ID__)
+        from wotoplatform.types.data_types.groups_data import (__ACTION_GROUPS__, __BATCH_GET_GROUP_INFO_BY_ID__)
         group_id_data = {
             'group_id': 'GR-125412'
         }
