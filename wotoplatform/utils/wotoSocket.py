@@ -25,7 +25,7 @@ class WotoSocket:
     _socket: socks.socksocket = None
     __reader: asyncio.StreamReader = None
     __writer: asyncio.StreamWriter = None
-    conn_lock = asyncio.Lock()
+    conn_lock: asyncio.Lock = None
     is_initialized: bool = False
     is_closed: bool = False
 
@@ -42,6 +42,7 @@ class WotoSocket:
         if not port:
             raise Exception('port is required')
         
+        self.conn_lock = asyncio.Lock()
         self._host = host
         self._port = port
         self._use_tls = use_tls
@@ -113,10 +114,10 @@ class WotoSocket:
     async def send(self, data: bytes) -> None:
         while not self.__writer and not self.is_initialized:
             await asyncio.sleep(0.1)
-        # await self.conn_lock.acquire()
-        self.__writer.write(data)
-        await self.__writer.drain()
-        # self.conn_lock.release()
+        
+        async with self.conn_lock:
+            self.__writer.write(data)
+            await self.__writer.drain()
     
     async def recv(self, size: int) -> bytes:
         try:
