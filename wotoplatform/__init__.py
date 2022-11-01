@@ -22,6 +22,8 @@ import inspect
 import logging
 from typing import Callable, Union
 import uuid
+
+from wotoplatform.types.woto_crypto.password_container import PasswordContainer256
 from .utils import (
     WotoSocket,
 )
@@ -185,10 +187,13 @@ class WotoClient(ClientBase):
         """
         Login user. Don't use this method directly, instead use start method.
         """
+        
+        pass_container = PasswordContainer256()
+        pass_container.set_as_password(password)
         response = await self.send_and_parse(
             LoginUserData(
                 username=username,
-                password=password,
+                password=pass_container,
                 auth_key=auth_key,
                 access_hash=access_hash,
             )
@@ -204,10 +209,12 @@ class WotoClient(ClientBase):
         Registers a new user on woto-platform. 
         Don't use this method directly, instead use start method.
         """
+        pass_container = PasswordContainer256()
+        pass_container.set_as_password(password)
         response = await self.send_and_parse(
             RegisterUserData(
                 username=username,
-                password=password,
+                password=pass_container,
             )
         )
         
