@@ -115,13 +115,9 @@ class _PrivateCollection:
         for current in my_data:
             self.blocks.append(_PrivateBlock(ord(current)))
 
-class LayerLengthContainer(WotoValidator):
+class LayerLengthContainer(BaseModel, WotoValidator):
     length: WotoLayerLength = 0
     layer_kind: CryptoLayerKind = CryptoLayerKind.O27
-
-    def __init__(self, layer_kind: CryptoLayerKind, length: WotoLayerLength):
-        self.layer_kind = layer_kind
-        self.length = length
 
     def is_valid(self) -> bool:
         return self.length > 0

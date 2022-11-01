@@ -68,12 +68,12 @@ from .types import (
     ResolveUsernameData,
 )
 
-__version__ = '0.0.18'
+__version__ = '0.0.19'
 log = logging.getLogger(__name__)
 
 class WotoClient(ClientBase):
     username: str = ''
-    password: str = ''
+    __password: str = ''
     endpoint_url: str = ''
     auth_key: str = ''
     access_hash: str = ''
@@ -88,7 +88,7 @@ class WotoClient(ClientBase):
     __MAX_DATA_BUFFER = 8
     __internal_receiver = {}
     __read_task: asyncio.Task = None
-    __internal_loop = None
+    #__internal_loop = None
     __read_data_error: Exception = None
     
 
@@ -106,7 +106,7 @@ class WotoClient(ClientBase):
             raise ValueError('password cannot be empty')
         
         self.username = username
-        self.password = password
+        self.__password = password
         self.__endpoint = endpoint
         self.__port = port
 
@@ -153,20 +153,23 @@ class WotoClient(ClientBase):
             try:
                 await self._login(
                     username=self.username,
-                    password=self.password,
+                    password=self.__password,
                     auth_key=self.auth_key,
                     access_hash=self.access_hash,
                 )
             except WrongUsername:
                 await self._register(
                     username=self.username,
-                    password=self.password,
+                    password=self.__password,
                 )
             
             self.is_logged_in = True
         except:
             self.is_initialized = False
             raise
+        
+        # for security reasons, set the password to None here.
+        self.__password = None
     
     async def stop(self) -> None:
         self.is_initialized = False

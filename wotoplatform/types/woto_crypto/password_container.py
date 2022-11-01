@@ -33,7 +33,7 @@ class PasswordContainer256(BaseModel):
     
     def calculate_signature(self, user_input: str) -> None:
         #TODO: add support for payload data
-        self.signature = self.__append_by_seps(user_input, self.__SIG_CHARS)
+        self.signature = self.__append_by_seps(user_input, self.__SIG_CHARS, True)
     
     def calculate_hash(self, user_input: str) -> None:
         self.hash256 = hashlib.sha256(user_input.encode()).hexdigest()
@@ -51,15 +51,21 @@ class PasswordContainer256(BaseModel):
     
     
     def has_correct_headers_len(self, headers: Iterable) -> bool:
-        return len(self.header) == self.__HEADERS_LEN
+        return len(headers) == self.__HEADERS_LEN
     
     
-    def __append_by_seps(self, slices: Iterable, values: list) -> str:
+    def __append_by_seps(
+        self, 
+        slices: Iterable, 
+        values: list, 
+        to_num: bool = False
+    ) -> str:
         result_value = ''
         current_index = -1
         for current in slices:
+            if to_num: current = str(ord(current))
             current_index += 1
-            result_value += str(current) + values[current_index % len(values)]
+            result_value += str(current) + chr(values[current_index % len(values)])
         return result_value
     
     
