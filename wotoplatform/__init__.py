@@ -66,7 +66,7 @@ from .types import (
     ResolveUsernameData,
 )
 
-__version__ = '0.0.17'
+__version__ = '0.0.18'
 log = logging.getLogger(__name__)
 
 class WotoClient(ClientBase):

@@ -18,6 +18,8 @@
 
 from typing import Optional
 
+from wotoplatform.types.woto_crypto.password_container import PasswordContainer256
+
 from .. import (
     DScaffold,
     RScaffold,
@@ -48,7 +50,7 @@ class RegisterUserData(DScaffold):
     user_id: int = 0
     private_hash: str = ''
     username: str = ''
-    password: str = ''
+    password: PasswordContainer256 = None
     first_name: str = ''
     last_name: str = ''
     email: str = ''
@@ -88,7 +90,7 @@ class RegisterUserResponse(RScaffold):
 
 class LoginUserData(DScaffold):
     username: str = ''
-    password: str = ''
+    password: PasswordContainer256 = None
     auth_key: str = ''
     access_hash: str = ''
 
@@ -238,9 +240,6 @@ class GetUserInfoResponse(RScaffold):
 
 class ResolveUsernameData(DScaffold):
     username: str = ''
-    password: str = ''
-    auth_key: str = ''
-    access_hash: str = ''
 
     def get_action(self) -> int:
         return __ACTION_USER__
