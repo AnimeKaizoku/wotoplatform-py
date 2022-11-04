@@ -26,15 +26,24 @@ jobs:
         with:
           user: __token__
           password: ${{ secrets.PYPI_API_TOKEN }}
-
+      - name: Set the Version
+        run: |
+          grep_result=$(grep version pyproject.toml)
+          prefix="version = \""
+          suffix="\""
+          final_value=${grep_result#"$prefix"}
+          final_value=${final_value%"$suffix"}
+          echo "CURRENT_LIB_VERSION=$(echo 'v'$final_value)" >> $GITHUB_ENV
       - name: Create GitHub Release
         id: create_release
-        uses: actions/create-release@v1
+        uses: marvinpinto/action-automatic-releases@latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          tag_name: latest
-          release_name: latest
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: ${{ env.CURRENT_LIB_VERSION }}
+          tag_name: ${{ env.CURRENT_LIB_VERSION }}
+          title: ${{ env.CURRENT_LIB_VERSION }}
           draft: false
           prerelease: false
 
