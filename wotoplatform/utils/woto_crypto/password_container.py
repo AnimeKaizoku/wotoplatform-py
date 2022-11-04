@@ -34,6 +34,9 @@ class PasswordContainer256(BaseModel):
     def calculate_signature(self, user_input: str) -> None:
         #TODO: add support for payload data
         self.signature = self.__append_by_seps(user_input, self.__SIG_CHARS, True)
+        if len(self.signature)%2 == 1:
+            # See: https://github.com/TheGolangHub/wotoCrypto/blob/4877c7c9925871013917a8c300bef9bd2a73d4b5/wotoCrypto/passContainer/methods.go#L15
+            self.signature += self.__SIG_CHARS[0x00]
     
     def calculate_hash(self, user_input: str) -> None:
         self.hash256 = hashlib.sha256(user_input.encode()).hexdigest()
