@@ -18,7 +18,7 @@ homepage = "https://github.com/ALiwoto/wotoplatform-Py"
 [tool.poetry.dependencies]
 python = ">=3.7"
 pydantic = ">=1.8.2"
-pysocks= "==1.7.1"
+pysocks= ">=1.7.1"
 
 [tool.poetry.dev-dependencies]
 pytest = ">=5.2"
