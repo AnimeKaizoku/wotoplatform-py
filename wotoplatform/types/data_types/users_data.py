@@ -18,7 +18,7 @@
 
 from typing import Optional
 
-from wotoplatform.types.woto_crypto.password_container import PasswordContainer256
+from wotoplatform.utils.woto_crypto.password_container import PasswordContainer256
 
 from .. import (
     DScaffold,

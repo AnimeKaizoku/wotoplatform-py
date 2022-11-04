@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "wotoplatform"
-version = "0.0.23"
+version = "0.0.24"
 description = ""
 authors = ["AliWoto <woto@kaizoku.cyou>"]
 packages = [

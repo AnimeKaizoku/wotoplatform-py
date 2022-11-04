@@ -23,7 +23,7 @@ import logging
 from typing import Callable, Union
 import uuid
 
-from wotoplatform.types.woto_crypto.password_container import PasswordContainer256
+from wotoplatform.utils.woto_crypto.password_container import PasswordContainer256
 from .utils import (
     WotoSocket,
 )
@@ -68,7 +68,7 @@ from .types import (
     ResolveUsernameData,
 )
 
-__version__ = '0.0.23'
+__version__ = '0.0.24'
 log = logging.getLogger(__name__)
 
 class WotoClient(ClientBase):
